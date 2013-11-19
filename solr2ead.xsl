@@ -42,6 +42,7 @@
 
     <!-- header: <eadheader> -->
         <xsl:template name="header">
+            <xsl:variable name="convertdate" select="current-dateTime()" />
             <eadheader>
                 <eadid>
                     <xsl:value-of select="field[@name = 'id']/normalize-space()" />
@@ -59,17 +60,23 @@
                         </author>
                     </titlestmt>
                     <publicationstmt>
-                        <publisher>
-                        </publisher>
-                        <date calendar="gregorian" era="ce"></date>
+                        <publisher>EHRI partners</publisher>
+                        <date><xsl:value-of select="field[@name = 'datetimemodified']/normalize-space()" /></date>
                     </publicationstmt>
                 </filedesc>
                 <profiledesc>
-                    <creation>
-                        <xsl:value-of select="field[@name = 'datetimemodified']/normalize-space()" />
+                    <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
+                        
+                        <date calendar="gregorian" era="ce">
+                            <xsl:attribute name="normal" select="$convertdate" />
+                            <xsl:value-of select="$convertdate" />
+                        </date>
                     </creation>
                     <langusage>
-                        <xsl:value-of select="field[@name = 'language']/normalize-space()" />
+                        <xsl:for-each select="field[@name = 'language']">
+                            <xsl:variable name="langpos" select="position()" />
+                            <language><xsl:value-of select="field[@name = 'language'][$langpos]/normalize-space()" /></language>
+                        </xsl:for-each>
                     </langusage>
                 </profiledesc>
             </eadheader>
@@ -96,14 +103,14 @@
                     <archdesc>
                         <did>
                             <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
-                            <unitid>
+                            <unitid type="irn">
                                 <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
                             </unitid>
-                        <xsl:if test="$rg != ''">
-                            <unitid type="rg_number">
-                                <xsl:value-of select="$rg" />
-                            </unitid>
-                        </xsl:if>
+                            <xsl:if test="$rg != ''">
+                                <unitid type="rg_number" label="Record group number">
+                                    <xsl:value-of select="$rg" />
+                                </unitid>
+                            </xsl:if>
                             <unittitle>
                                 <xsl:value-of select="field[@name = 'title']/normalize-space()" />
                             </unittitle>
