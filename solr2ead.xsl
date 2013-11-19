@@ -95,9 +95,15 @@
                 <xsl:template name="description">
                     <archdesc>
                         <did>
+                            <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
                             <unitid>
                                 <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
                             </unitid>
+                        <xsl:if test="$rg != ''">
+                            <unitid type="rg_number">
+                                <xsl:value-of select="$rg" />
+                            </unitid>
+                        </xsl:if>
                             <unittitle>
                                 <xsl:value-of select="field[@name = 'title']/normalize-space()" />
                             </unittitle>
@@ -187,38 +193,25 @@
                         <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
 accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
             <controlaccess>
-                <xsl:for-each select="field[@name = 'subject_type']">
-                    <xsl:choose>
-                        <xsl:when test=". = 'Personal Name'">
-                            <xsl:variable name = "pos" select="position()" />
-                            <p>
-                                <persname>
-                                    <xsl:value-of select="../field[@name = 'subject_heading'][$pos]/normalize-space()" />
-                                </persname>
-                            </p>
-                        </xsl:when>
-                        <xsl:when test=". = 'Corporate Name'">
-                            <xsl:variable name = "pos" select="position()" />
-                            <p>
-                                <corpname>
-                                    <xsl:value-of select="../field[@name = 'subject_heading'][$pos]/normalize-space()" />
-                                </corpname>
-                            </p>
-                        </xsl:when>
-                        <xsl:when test=". = 'Topical Term'">
-                            <xsl:variable name = "pos" select="position()" />
-                            <p>
-                                <subject>
-                                    <xsl:value-of select="../field[@name = 'subject_heading'][$pos]/normalize-space()" />
-                                </subject>
-                            </p>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <p>
-                                <xsl:value-of select="../field[@name = 'subject_heading']/normalize-space()" />
-                            </p>
-                        </xsl:otherwise>
-                    </xsl:choose>
+                <xsl:for-each select="field[@name = 'subject_person']">
+                    <persname>
+                        <xsl:value-of select="./normalize-space()" />
+                    </persname>
+                </xsl:for-each>
+                <xsl:for-each select="field[@name = 'subject_topical']">
+                    <subject>
+                        <xsl:value-of select="./normalize-space()" />
+                    </subject>
+                </xsl:for-each>
+                <xsl:for-each select="field[@name = 'subject_geography']">
+                    <geogname>
+                        <xsl:value-of select="./normalize-space()" />
+                    </geogname>
+                </xsl:for-each>
+                <xsl:for-each select="field[@name = 'subject_corporate']">
+                    <corpname>
+                        <xsl:value-of select="./normalize-space()" />
+                    </corpname>
                 </xsl:for-each>
             </controlaccess>
 
