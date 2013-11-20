@@ -66,18 +66,11 @@
                 </filedesc>
                 <profiledesc>
                     <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                        
-                        <date calendar="gregorian" era="ce">
-                            <xsl:attribute name="normal" select="$convertdate" />
+                        <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
                             <xsl:value-of select="$convertdate" />
                         </date>
                     </creation>
-                    <langusage>
-                        <xsl:for-each select="field[@name = 'language']">
-                            <xsl:variable name="langpos" select="position()" />
-                            <language><xsl:value-of select="field[@name = 'language'][$langpos]/normalize-space()" /></language>
-                        </xsl:for-each>
-                    </langusage>
+                    <langusage><language langcode="eng">English</language></langusage>
                 </profiledesc>
             </eadheader>
         </xsl:template>
@@ -129,6 +122,17 @@
                                     <xsl:value-of select="field[@name = 'material_composition']/normalize-space()" />
                                 </physfacet>
                             </physdesc>
+                            <langmaterial>
+                                <xsl:for-each select="field[@name = 'language']">
+                                    <language><xsl:value-of select="./normalize-space()" /></language>
+                                </xsl:for-each>
+                            </langmaterial>
+                            <arrangement>
+                                <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
+                            </arrangement>
+                            <origination>
+                                <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+                            </origination>
                             <repository>
 
                             </repository>
@@ -145,21 +149,16 @@
                             <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
                             <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
                             <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
-                            <xsl:choose> 
-                                <xsl:when test="$accession != ''">
-                                    <p>Accession number: <xsl:copy-of select="$accession" /></p>
-                                </xsl:when>
-                            </xsl:choose>
-                            <xsl:choose> 
-                                <xsl:when test="$source != ''">
-                                    <p>Source: <xsl:copy-of select="$source" /></p>
-                                </xsl:when>
-                            </xsl:choose>
-                            <xsl:choose> 
-                                <xsl:when test="$credit != ''">
-                                    <p>Credit: <xsl:copy-of select="$credit" /></p>
-                                </xsl:when>
-                            </xsl:choose>
+                        
+                            <xsl:if test="$accession != ''">
+                                <p>Accession number: <xsl:copy-of select="$accession" /></p>
+                            </xsl:if>
+                            <xsl:if test="$source != ''">
+                                <p>Source: <xsl:copy-of select="$source" /></p>
+                            </xsl:if>
+                            <xsl:if test="$credit != ''">
+                                <p>Credit: <xsl:copy-of select="$credit" /></p>
+                            </xsl:if>
                         </acqinfo>
 
                         <!-- biographic description of the person or organization -->
