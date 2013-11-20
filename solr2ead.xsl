@@ -107,9 +107,6 @@
                             <unittitle>
                                 <xsl:value-of select="field[@name = 'title']/normalize-space()" />
                             </unittitle>
-                            <origination>
-                                <xsl:value-of select="field[@name = 'provenance']/normalize-space()" />
-                            </origination>
                             <unitdate calendar="gregorian" era="ce">
                                 <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
                             </unitdate>
