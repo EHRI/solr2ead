@@ -184,8 +184,16 @@
 
                         </relatedmaterial>
 
+                        <accessrestrict>
+                            <xsl:for-each select="field[@name = 'conditions_access']">
+                                <p>
+                                    <xsl:value-of select="./normalize-space()" />
+                                </p>
+                            </xsl:for-each>
+                        </accessrestrict>
+
                         <userestrict>
-                            <xsl:for-each select="field[@name = 'copyright']">
+                            <xsl:for-each select="field[@name = 'conditions_use']">
                                 <p>
                                     <xsl:value-of select="./normalize-space()" />
                                 </p>
@@ -218,6 +226,16 @@ accessrestrict and userestrict - statement concerning any restrictions on the ma
                     <corpname>
                         <xsl:value-of select="./normalize-space()" />
                     </corpname>
+                </xsl:for-each>
+                <xsl:for-each select="field[@name = 'subject_uniform_title']">
+                    <title>
+                        <xsl:value-of select="./normalize-space()" />
+                    </title>
+                </xsl:for-each>
+                <xsl:for-each select="field[@name = 'subject_genre_form']">
+                    <genreform>
+                        <xsl:value-of select="./normalize-space()" />
+                    </genreform>
                 </xsl:for-each>
             </controlaccess>
 
