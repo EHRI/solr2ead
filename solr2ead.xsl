@@ -96,6 +96,12 @@
                     <archdesc>
                         <did>
                             <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
+                            <unittitle>
+                                <xsl:value-of select="field[@name = 'title']/normalize-space()" />
+                            </unittitle>
+                            <unitdate calendar="gregorian" era="ce">
+                                <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
+                            </unitdate>
                             <unitid type="irn">
                                 <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
                             </unitid>
@@ -104,12 +110,9 @@
                                     <xsl:value-of select="$rg" />
                                 </unitid>
                             </xsl:if>
-                            <unittitle>
-                                <xsl:value-of select="field[@name = 'title']/normalize-space()" />
-                            </unittitle>
-                            <unitdate calendar="gregorian" era="ce">
-                                <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
-                            </unitdate>
+                            <origination>
+                                <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+                            </origination>
                             <physdesc>
                                 <extent>
                                     <xsl:value-of select="field[@name = 'extent']/normalize-space()" />
@@ -127,9 +130,6 @@
                             <arrangement>
                                 <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
                             </arrangement>
-                            <origination>
-                                <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-                            </origination>
                             <repository>
 
                             </repository>
