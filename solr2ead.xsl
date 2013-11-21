@@ -10,7 +10,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="urn:isbn:1-931666-22-9"
   version="2.0">
-  <xsl:output method="xml" omit-xml-declaration="no" indent="yes"/>
+  <xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
   <xsl:output encoding="UTF-8"/>
 
   <xsl:template match="/add">
