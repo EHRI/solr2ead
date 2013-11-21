@@ -20,7 +20,7 @@
 		  <!-- check if it is a description on collection level with subordinate components -->
 		  <xsl:choose>
         <xsl:when test="field[@name = 'assoc_is_parent' and contains(text(),'Yes')]">
-          <xsl:variable name="filename" select="concat('ead/' , '_', field[@name = 'id'] , '.xml')" />
+          <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
           <xsl:result-document href="{$filename}" method="xml">
             <ead>
               <xsl:call-template name="header"/>
