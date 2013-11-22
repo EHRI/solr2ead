@@ -130,7 +130,7 @@
                                 </xsl:for-each>
                             </langmaterial>
                             <arrangement>
-                                <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
+                                <p><xsl:value-of select="field[@name = 'arrangement']/normalize-space()" /></p>
                             </arrangement>
                             <repository>
 
