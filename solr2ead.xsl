@@ -113,7 +113,7 @@
                                 </unitid>
                             </xsl:if>
                             <origination>
-                                <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+                                <xsl:value-of select="field[@name = 'historical_provenance']/normalize-space()" />
                             </origination>
                             <physdesc>
                                 <extent>
@@ -148,6 +148,7 @@
                             <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
                             <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
                             <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
+                            <xsl:variable name="fa_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
                         
                             <xsl:if test="$accession != ''">
                                 <p>Accession number: <xsl:copy-of select="$accession" /></p>
@@ -158,7 +159,18 @@
                             <xsl:if test="$credit != ''">
                                 <p>Credit: <xsl:copy-of select="$credit" /></p>
                             </xsl:if>
+                            <xsl:if test="$fa_provenance != ''">
+                                <p><xsl:copy-of select="$fa_provenance" /></p>
+                            </xsl:if>
                         </acqinfo>
+                        
+                        <custodhist>
+                            <xsl:for-each select="field[@name = 'finding_aid_provenance']">
+                                <p>
+                                    <xsl:value-of select="./normalize-space()" />
+                                </p>
+                            </xsl:for-each>
+                        </custodhist>
 
                         <!-- biographic description of the person or organization -->
                         <bioghist>
