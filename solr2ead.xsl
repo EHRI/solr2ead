@@ -12,7 +12,7 @@
 -->
 
     <xsl:template match="/add">
-        <xsl:for-each select="//doc[.//@name = 'rg_number']">
+        <xsl:for-each select="//doc">
             <xsl:variable name="parent" select="field[@name = 'assoc_parent_irn']/normalize-space()" />
             <xsl:choose>
                 <xsl:when test="$parent != ''">
