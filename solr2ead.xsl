@@ -67,7 +67,7 @@
                   </author>
               </titlestmt>
               <publicationstmt>
-                  <publisher>EHRI partners</publisher>
+                  <publisher>USHMM / EHRI partners</publisher>
                   <date><xsl:value-of select="field[@name = 'datetimemodified']/normalize-space()" /></date>
               </publicationstmt>
           </filedesc>
