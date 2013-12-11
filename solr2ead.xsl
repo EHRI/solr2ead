@@ -43,177 +43,177 @@
     </xsl:template>
 
     <!-- header: <eadheader> -->
-        <xsl:template name="header">
-            <xsl:variable name="convertdate" select="current-dateTime()" />
-            <eadheader>
-                <eadid>
-                    <xsl:value-of select="field[@name = 'id']/normalize-space()" />
-                </eadid>
-                <filedesc>
-                    <titlestmt>
-                        <titleproper>
-                            <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
-                        </titleproper>
-                        <subtitle>
-                            <xsl:value-of select="field[@name = 'title']/normalize-space()" />
-                        </subtitle>
-                        <author>
-                            <xsl:value-of select="field[@name = 'creator_name']/normalize-space()" />
-                        </author>
-                    </titlestmt>
-                    <publicationstmt>
-                        <publisher>USHMM / EHRI partners</publisher>
-                        <date><xsl:value-of select="field[@name = 'datetimemodified']/normalize-space()" /></date>
-                    </publicationstmt>
-                </filedesc>
-                <profiledesc>
-                    <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                        <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
-                            <xsl:value-of select="$convertdate" />
-                        </date>
-                    </creation>
-                    <langusage><language langcode="eng">English</language></langusage>
-                </profiledesc>
-            </eadheader>
-        </xsl:template>
+    <xsl:template name="header">
+        <xsl:variable name="convertdate" select="current-dateTime()" />
+        <eadheader>
+            <eadid>
+                <xsl:value-of select="field[@name = 'id']/normalize-space()" />
+            </eadid>
+            <filedesc>
+                <titlestmt>
+                    <titleproper>
+                        <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
+                    </titleproper>
+                    <subtitle>
+                        <xsl:value-of select="field[@name = 'title']/normalize-space()" />
+                    </subtitle>
+                    <author>
+                        <xsl:value-of select="field[@name = 'creator_name']/normalize-space()" />
+                    </author>
+                </titlestmt>
+                <publicationstmt>
+                    <publisher>USHMM / EHRI partners</publisher>
+                    <date><xsl:value-of select="field[@name = 'datetimemodified']/normalize-space()" /></date>
+                </publicationstmt>
+            </filedesc>
+            <profiledesc>
+                <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
+                    <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
+                        <xsl:value-of select="$convertdate" />
+                    </date>
+                </creation>
+                <langusage><language langcode="eng">English</language></langusage>
+            </profiledesc>
+        </eadheader>
+    </xsl:template>
 
-        <!-- frontmatter: <frontmatter> -->
-            <xsl:template name="fm">
-                <frontmatter>
-                    <titlepage>
-                        <titleproper>
-                            <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
-                        </titleproper>
-                        <publisher>
-                        </publisher>
-                        <date calendar="gregorian" era="ce">
-                            <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
-                        </date>
-                    </titlepage>
-                </frontmatter>
-            </xsl:template>
+    <!-- frontmatter: <frontmatter> -->
+    <xsl:template name="fm">
+        <frontmatter>
+            <titlepage>
+                <titleproper>
+                    <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
+                </titleproper>
+                <publisher>
+                </publisher>
+                <date calendar="gregorian" era="ce">
+                    <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
+                </date>
+            </titlepage>
+        </frontmatter>
+    </xsl:template>
 
-            <!-- archival description: <archdesc> -->
-                <xsl:template name="description">
-                    <archdesc>
-                        <did>
-                            <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
-                            <unittitle>
-                                <xsl:value-of select="field[@name = 'title']/normalize-space()" />
-                            </unittitle>
-                            <unitdate calendar="gregorian" era="ce">
-                                <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
-                            </unitdate>
-                            <unitid type="irn">
-                                <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
-                            </unitid>
-                            <xsl:if test="$rg != ''">
-                                <unitid type="rg_number" label="Record group number">
-                                    <xsl:value-of select="$rg" />
-                                </unitid>
-                            </xsl:if>
-                            <origination>
-                                <xsl:value-of select="field[@name = 'historical_provenance']/normalize-space()" />
-                            </origination>
-                            <physdesc>
-                                <extent>
-                                    <xsl:value-of select="field[@name = 'extent']/normalize-space()" />
-                                </extent>
-                                <physfacet>
-                                    <xsl:value-of select="field[@name = 'dimensions']/normalize-space()" />
-                                    <xsl:value-of select="field[@name = 'material_composition']/normalize-space()" />
-                                </physfacet>
-                            </physdesc>
-                            <langmaterial>
-                                <xsl:for-each select="field[@name = 'language']">
-                                    <language><xsl:value-of select="./normalize-space()" /></language>
-                                </xsl:for-each>
-                            </langmaterial>
-                            <arrangement>
-                                <p><xsl:value-of select="field[@name = 'arrangement']/normalize-space()" /></p>
-                            </arrangement>
-                            <repository>
+<!-- archival description: <archdesc> -->
+    <xsl:template name="description">
+        <archdesc>
+            <did>
+                <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
+                <unittitle>
+                    <xsl:value-of select="field[@name = 'title']/normalize-space()" />
+                </unittitle>
+                <unitdate calendar="gregorian" era="ce">
+                    <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
+                </unitdate>
+                <unitid type="irn">
+                    <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
+                </unitid>
+                <xsl:if test="$rg != ''">
+                    <unitid type="rg_number" label="Record group number">
+                        <xsl:value-of select="$rg" />
+                    </unitid>
+                </xsl:if>
+                <origination>
+                    <xsl:value-of select="field[@name = 'historical_provenance']/normalize-space()" />
+                </origination>
+                <physdesc>
+                    <extent>
+                        <xsl:value-of select="field[@name = 'extent']/normalize-space()" />
+                    </extent>
+                    <physfacet>
+                        <xsl:value-of select="field[@name = 'dimensions']/normalize-space()" />
+                        <xsl:value-of select="field[@name = 'material_composition']/normalize-space()" />
+                    </physfacet>
+                </physdesc>
+                <langmaterial>
+                    <xsl:for-each select="field[@name = 'language']">
+                        <language><xsl:value-of select="./normalize-space()" /></language>
+                    </xsl:for-each>
+                </langmaterial>
+                <arrangement>
+                    <p><xsl:value-of select="field[@name = 'arrangement']/normalize-space()" /></p>
+                </arrangement>
+                <repository>
 
-                            </repository>
-                            <abstract>
-                                <xsl:for-each select="field[@name = 'brief_desc']">
-                                    <p>
-                                        <xsl:value-of select="./normalize-space()" />
-                                    </p>
-                                </xsl:for-each>
-                            </abstract>
-                        </did>
+                </repository>
+                <abstract>
+                    <xsl:for-each select="field[@name = 'brief_desc']">
+                        <p>
+                            <xsl:value-of select="./normalize-space()" />
+                        </p>
+                    </xsl:for-each>
+                </abstract>
+            </did>
 
-                        <acqinfo>
-                            <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
-                            <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
-                            <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
-                            <xsl:variable name="fa_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-                        
-                            <xsl:if test="$accession != ''">
-                                <p>Accession number: <xsl:copy-of select="$accession" /></p>
-                            </xsl:if>
-                            <xsl:if test="$source != ''">
-                                <p>Source: <xsl:copy-of select="$source" /></p>
-                            </xsl:if>
-                            <xsl:if test="$credit != ''">
-                                <p>Credit: <xsl:copy-of select="$credit" /></p>
-                            </xsl:if>
-                            <xsl:if test="$fa_provenance != ''">
-                                <p><xsl:copy-of select="$fa_provenance" /></p>
-                            </xsl:if>
-                        </acqinfo>
-                        
-                        <custodhist>
-                            <xsl:for-each select="field[@name = 'finding_aid_provenance']">
-                                <p>
-                                    <xsl:value-of select="./normalize-space()" />
-                                </p>
-                            </xsl:for-each>
-                        </custodhist>
+            <acqinfo>
+                <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
+                <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
+                <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
+                <xsl:variable name="fa_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+            
+                <xsl:if test="$accession != ''">
+                    <p>Accession number: <xsl:copy-of select="$accession" /></p>
+                </xsl:if>
+                <xsl:if test="$source != ''">
+                    <p>Source: <xsl:copy-of select="$source" /></p>
+                </xsl:if>
+                <xsl:if test="$credit != ''">
+                    <p>Credit: <xsl:copy-of select="$credit" /></p>
+                </xsl:if>
+                <xsl:if test="$fa_provenance != ''">
+                    <p><xsl:copy-of select="$fa_provenance" /></p>
+                </xsl:if>
+            </acqinfo>
+            
+            <custodhist>
+                <xsl:for-each select="field[@name = 'finding_aid_provenance']">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
+            </custodhist>
 
-                        <!-- biographic description of the person or organization -->
-                        <bioghist>
-                            <xsl:for-each select="field[@name = 'creator_bio']">
-                                <p>
-                                    <xsl:value-of select="./normalize-space()" />
-                                </p>
-                            </xsl:for-each>
-                        </bioghist>
+            <!-- biographic description of the person or organization -->
+            <bioghist>
+                <xsl:for-each select="field[@name = 'creator_bio']">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
+            </bioghist>
 
-                        <!-- a detailed narrative description of the collection material -->
-                        <scopecontent>
-                            <xsl:for-each select="field[@name = 'scope_content' or @name = 'interview_summary']">
-                                <p>
-                                    <xsl:value-of select="./normalize-space()" />
-                                </p>
-                            </xsl:for-each>
-                        </scopecontent>
+            <!-- a detailed narrative description of the collection material -->
+            <scopecontent>
+                <xsl:for-each select="field[@name = 'scope_content' or @name = 'interview_summary']">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
+            </scopecontent>
 
-                        <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
-                        <relatedmaterial>
+            <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
+            <relatedmaterial>
 
-                        </relatedmaterial>
+            </relatedmaterial>
 
-                        <accessrestrict>
-                            <xsl:for-each select="field[@name = 'conditions_access']">
-                                <p>
-                                    <xsl:value-of select="./normalize-space()" />
-                                </p>
-                            </xsl:for-each>
-                        </accessrestrict>
+            <accessrestrict>
+                <xsl:for-each select="field[@name = 'conditions_access']">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
+            </accessrestrict>
 
-                        <userestrict>
-                            <xsl:for-each select="field[@name = 'conditions_use']">
-                                <p>
-                                    <xsl:value-of select="./normalize-space()" />
-                                </p>
-                            </xsl:for-each>
-                        </userestrict>
+            <userestrict>
+                <xsl:for-each select="field[@name = 'conditions_use']">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
+            </userestrict>
 
-                        <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
-                        <separatedmaterial>
-                        </separatedmaterial>
+            <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
+            <separatedmaterial>
+            </separatedmaterial>
 
                         <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
 accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
