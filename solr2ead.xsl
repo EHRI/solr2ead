@@ -132,9 +132,11 @@
                 <arrangement>
                     <p><xsl:value-of select="field[@name = 'arrangement']/normalize-space()" /></p>
                 </arrangement>
+          <!--
                 <repository>
 
                 </repository>
+            -->
                 <abstract>
                     <xsl:for-each select="field[@name = 'brief_desc']">
                         <p>
@@ -148,8 +150,7 @@
                 <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
                 <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
                 <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
-                <xsl:variable name="fa_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-            
+                
                 <xsl:if test="$accession != ''">
                     <p>Accession number: <xsl:copy-of select="$accession" /></p>
                 </xsl:if>
@@ -159,9 +160,11 @@
                 <xsl:if test="$credit != ''">
                     <p>Credit: <xsl:copy-of select="$credit" /></p>
                 </xsl:if>
-                <xsl:if test="$fa_provenance != ''">
-                    <p><xsl:copy-of select="$fa_provenance" /></p>
-                </xsl:if>
+                <xsl:for-each select="field[@name = ('provenance','collection_provenance','object_provenance','historical_provenance')]">
+                    <p>
+                        <xsl:value-of select="./normalize-space()" />
+                    </p>
+                </xsl:for-each>
             </acqinfo>
             
             <custodhist>
@@ -191,9 +194,11 @@
             </scopecontent>
 
             <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
+        <!-- 
             <relatedmaterial>
 
             </relatedmaterial>
+         -->
 
             <accessrestrict>
                 <xsl:for-each select="field[@name = 'conditions_access']">
@@ -212,10 +217,12 @@
             </userestrict>
 
             <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
+        <!-- 
             <separatedmaterial>
             </separatedmaterial>
+         -->
 
-                        <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
+            <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
 accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
             <controlaccess>
                 <xsl:for-each select="field[@name = 'subject_person']">
@@ -251,8 +258,10 @@ accessrestrict and userestrict - statement concerning any restrictions on the ma
             </controlaccess>
 
             <!-- second part of the archival description: the inventory with descriptive subordinate components -->
+        <!-- 
             <dsc>
             </dsc>
+         -->
         </archdesc>
     </xsl:template>
 
