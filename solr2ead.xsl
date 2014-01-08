@@ -8,6 +8,7 @@
 //*****************************************************************************
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns="urn:isbn:1-931666-22-9"
   version="2.0">
   <xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
@@ -118,14 +119,15 @@
     <archdesc>
       <xsl:call-template name="normal_description" />
       <xsl:call-template name="components">
-        <xsl:with-param name="level" as="xs:integer" select="0">
+        <xsl:with-param name="level" as="xs:integer" select="0"/>
       </xsl:call-template>
     </archdesc>
   </xsl:template>
 
   <xsl:template name="normal_description">
-  <did>
+    <did>
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
+          <xsl:variable name="acc_num" select="field[@name = 'accession_number']/normalize-space()" />
           <unittitle>
               <xsl:value-of select="field[@name = 'title']/normalize-space()" />
           </unittitle>
@@ -138,6 +140,11 @@
           <xsl:if test="$rg != ''">
               <unitid type="rg_number" label="Record group number">
                   <xsl:value-of select="$rg" />
+              </unitid>
+          </xsl:if>
+          <xsl:if test="$acc_num != ''">
+              <unitid type="acc_num" label="Accession number">
+                  <xsl:value-of select="$acc_num" />
               </unitid>
           </xsl:if>
           <origination>
@@ -271,7 +278,11 @@
     
     <!-- level: 0 when in <archdesc>
                 1 - 12 for <c01> - <c12> -->
-    <xsl:param name="level" as="xs:integer">
+    <xsl:param name="level" as="xs:integer" />
+    <!-- get the irn to retrieve components -->
+    <xsl:variable name="irn">
+      <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
+    </xsl:variable>
   <!-- second part of the archival description: the inventory with descriptive subordinate components -->
     <xsl:variable name="components" select="//doc[field[@name = 'assoc_parent_irn'] = $irn]" />
     <xsl:if test="$components">
@@ -279,23 +290,23 @@
         <xsl:when test="$level = 0">
           <dsc>
             <xsl:for-each select="$components">
-              <c>
+              <c01>
                 <xsl:call-template name="normal_description"/>
                 <xsl:call-template name="components">
-                  <xsl:with-param name="level" as="xs:integer" select="$level+1">
+                  <xsl:with-param name="level" as="xs:integer" select="$level+2" />
                 </xsl:call-template>
-              </c>
+              </c01>
             </xsl:for-each>
           </dsc>
         </xsl:when>
         <xsl:otherwise>
           <xsl:for-each select="$components">
-            <c>
+            <xsl:element name="{concat('c', format-number($level, '00'))}">
               <xsl:call-template name="normal_description"/>
               <xsl:call-template name="components">
-                <xsl:with-param name="level" as="xs:integer" select="$level+1">
+                <xsl:with-param name="level" as="xs:integer" select="$level+1" />
               </xsl:call-template>
-            </c>
+            </xsl:element>
           </xsl:for-each>
         </xsl:otherwise>
       </xsl:choose>
