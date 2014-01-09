@@ -32,28 +32,6 @@
               </ead>
             </xsl:result-document>
         </xsl:if>
-        <!-- check if it is a description on collection level with subordinate components -->
-        <!-- 
-<xsl:choose>
-          <xsl:when test="field[@name = 'assoc_is_parent' and contains(text(),'Yes')]">
-            
-          </xsl:when>
-          <xsl:otherwise>
-            <!~~ or else the description is without components and is not an component itself! ~~>
-            <xsl:if test="not(field[@name = 'assoc_parent_irn']/text())">
-              <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
-              <xsl:result-document href="{$filename}" method="xml">
-                <ead>
-                  <xsl:call-template name="header"/>
-                  <xsl:call-template name="fm"/>
-                  <xsl:call-template name="description"/>
-                  <xsl:apply-templates />
-                </ead>
-              </xsl:result-document>              
-            </xsl:if>
-          </xsl:otherwise>
-        </xsl:choose>
- -->
       </xsl:for-each>
   </xsl:template>
 
@@ -151,11 +129,13 @@
               <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
           </origination>
           <physdesc>
+              <dimensions>
+                  <xsl:value-of select="field[@name = 'dimensions']/normalize-space()" />
+              </dimensions>
               <extent>
                   <xsl:value-of select="field[@name = 'extent']/normalize-space()" />
               </extent>
               <physfacet>
-                  <xsl:value-of select="field[@name = 'dimensions']/normalize-space()" />
                   <xsl:value-of select="field[@name = 'material_composition']/normalize-space()" />
               </physfacet>
           </physdesc>
