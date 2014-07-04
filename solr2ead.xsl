@@ -94,8 +94,9 @@
     <xsl:variable name="irn">
       <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
     </xsl:variable>  
-    
-    <archdesc>
+
+    <!-- NB: Level attribute is mandatory -->
+    <archdesc level="otherlevel">
       <xsl:call-template name="normal_description" />
       <xsl:call-template name="components">
         <xsl:with-param name="level" as="xs:integer" select="0"/>
@@ -127,18 +128,64 @@
               </unitid>
           </xsl:if>
           <origination>
-              <xsl:value-of select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+              <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+              <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
+              <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
+
+              <xsl:for-each select="$finding_aid_provenance">
+                  <p>
+                      <xsl:copy-of select="$finding_aid_provenance" />
+                  </p>
+              </xsl:for-each>
+              <xsl:for-each select="$provenance">
+                  <p>
+                      <xsl:copy-of select="$provenance" />
+                  </p>
+              </xsl:for-each>
+              <xsl:for-each select="$historical_provenance">
+                  <p>
+                      <xsl:copy-of select="$historical_provenance" />
+                  </p>
+              </xsl:for-each>
           </origination>
           <physdesc>
-              <dimensions>
-                  <xsl:value-of select="field[@name = 'dimensions']/normalize-space()" />
-              </dimensions>
-              <extent>
-                  <xsl:value-of select="field[@name = 'extent']/normalize-space()" />
-              </extent>
-              <physfacet>
-                  <xsl:value-of select="field[@name = 'material_composition']/normalize-space()" />
-              </physfacet>
+              <xsl:variable name="extent_quantity" select="field[@name = 'extent_quantity']/normalize-space()" />
+              <xsl:variable name="extent_unit" select="field[@name = 'extent_unit']/normalize-space()" />
+              <xsl:variable name="extent_format" select="field[@name = 'extent_format']/normalize-space()" />
+              <!-- if there vars exist there should always be an equal number of them,
+                   and they need to be reordered to make sense in the EAD -->
+              <xsl:for-each select="$extent_quantity">
+                <xsl:variable name="i" select="position()" />
+                <extent>
+                    <xsl:value-of select="concat($extent_quantity[$i], ' ', $extent_unit[$i], ' ', $extent_format[$i])"/>
+                </extent>
+              </xsl:for-each>
+
+              <xsl:variable name="extent" select="field[@name = 'extent']/normalize-space()" />
+              <xsl:for-each select="$extent">
+                  <extent>
+                      <xsl:copy-of select="$extent" />
+                  </extent>
+              </xsl:for-each>
+
+              <xsl:variable name="dimensions" select="field[@name = 'dimensions']/normalize-space()" />
+              <xsl:for-each select="$dimensions">
+                  <dimensions>
+                      <xsl:copy-of select="$dimensions" />
+                  </dimensions>
+              </xsl:for-each>
+              <xsl:variable name="material_composition" select="field[@name = 'material_composition']/normalize-space()" />
+              <xsl:for-each select="$material_composition">
+                  <physfacet>
+                      <xsl:copy-of select="$material_composition" />
+                  </physfacet>
+              </xsl:for-each>
+              <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
+              <xsl:for-each select="$object_type">
+                  <physfacet>
+                      <xsl:copy-of select="$object_type" />
+                  </physfacet>
+              </xsl:for-each>
           </physdesc>
           <langmaterial>
               <xsl:for-each select="field[@name = 'language']">
@@ -152,11 +199,6 @@
 
           </repository>
           <abstract>
-              <xsl:for-each select="field[@name = 'brief_desc']">
-                  <p>
-                      <xsl:value-of select="./normalize-space()" />
-                  </p>
-              </xsl:for-each>
           </abstract>
       </did>
 
@@ -176,6 +218,14 @@
           </xsl:if>
       </acqinfo>
 
+      <!-- Optional funding note field -->
+      <xsl:variable name="funding_note" select="field[@name = 'funding_note']/normalize-space()" />
+      <xsl:if test="$funding_note != ''">
+          <note>
+              <p><xsl:copy-of select="$funding_note"/></p>
+          </note>
+      </xsl:if>
+
       <!-- biographic description of the person or organization -->
       <bioghist>
           <xsl:for-each select="field[@name = 'creator_bio']">
@@ -187,16 +237,35 @@
 
       <!-- a detailed narrative description of the collection material -->
       <scopecontent>
-          <xsl:for-each select="field[@name = 'scope_content']">
+          <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
+          <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
+          <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
+          <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
+
+          <xsl:for-each select="$brief_desc">
               <p>
-                  <xsl:value-of select="./normalize-space()" />
+                  <xsl:copy-of select="$brief_desc" />
+              </p>
+          </xsl:for-each>
+          <xsl:for-each select="$collection_summary">
+              <p>
+                  <xsl:value-of select="$collection_summary" />
+              </p>
+          </xsl:for-each>
+          <xsl:for-each select="$interview_summary">
+              <p>
+                  <xsl:value-of select="$interview_summary" />
+              </p>
+          </xsl:for-each>
+          <xsl:for-each select="$scope_content">
+              <p>
+                  <xsl:value-of select="$scope_content" />
               </p>
           </xsl:for-each>
       </scopecontent>
 
       <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
       <relatedmaterial>
-
       </relatedmaterial>
 
       <accessrestrict>
@@ -271,7 +340,7 @@
         <xsl:when test="$level = 0">
           <dsc>
             <xsl:for-each select="$components">
-              <c01>
+              <c01 level="otherlevel">
                 <xsl:call-template name="normal_description"/>
                 <xsl:call-template name="components">
                   <xsl:with-param name="level" as="xs:integer" select="$level+2" />
@@ -297,5 +366,4 @@
     
   <!-- get rid of any trailing content or structure-->
   <xsl:template match="text()|@*"/>
-
 </xsl:stylesheet>
