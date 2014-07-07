@@ -162,6 +162,18 @@
                   </extent>
               </xsl:for-each>
 
+              <!-- document_quantity and document_container are similar -->
+              <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
+              <xsl:variable name="document_container" select="field[@name = 'document_container']/normalize-space()" />
+              <xsl:for-each select="$document_quantity">
+                <xsl:variable name="i" select="position()" />
+                <extent>
+                    <xsl:value-of select="concat($document_quantity[$i], ' ', $document_container[$i])"/>
+                </extent>
+              </xsl:for-each>
+
+              <xsl:variable name="extent" select="field[@name = 'extent']/normalize-space()" />
+
               <xsl:variable name="dimensions" select="field[@name = 'dimensions']/normalize-space()" />
               <xsl:for-each select="$dimensions">
                   <dimensions>
