@@ -129,17 +129,11 @@
           </xsl:if>
           <origination>
               <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-              <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
               <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
               <xsl:for-each select="$finding_aid_provenance">
                   <p>
                       <xsl:copy-of select="$finding_aid_provenance" />
-                  </p>
-              </xsl:for-each>
-              <xsl:for-each select="$provenance">
-                  <p>
-                      <xsl:copy-of select="$provenance" />
                   </p>
               </xsl:for-each>
               <xsl:for-each select="$historical_provenance">
@@ -192,15 +186,25 @@
                   <language><xsl:value-of select="./normalize-space()" /></language>
               </xsl:for-each>
           </langmaterial>
-          <arrangement>
-              <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
-          </arrangement>
           <repository>
 
           </repository>
           <abstract>
           </abstract>
       </did>
+
+      <arrangement>
+          <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
+      </arrangement>
+
+      <custodhist>
+          <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
+          <xsl:for-each select="$provenance">
+              <p>
+                  <xsl:copy-of select="$provenance" />
+              </p>
+          </xsl:for-each>
+      </custodhist>
 
       <acqinfo>
           <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
