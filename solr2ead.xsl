@@ -3,7 +3,7 @@
 //*****************************************************************************
 // Written by Junte Zhang <juntezhang@gmail.com> in 2013
 // With modifications by Michael Bryant and Ben Companjen
-// 
+//
 // Distributed under the GNU General Public Licence
 //*****************************************************************************
 -->
@@ -93,7 +93,7 @@
     <!-- get the irn to retrieve components -->
     <xsl:variable name="irn">
       <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
-    </xsl:variable>  
+    </xsl:variable>
 
     <!-- NB: Level attribute is mandatory -->
     <archdesc level="otherlevel">
@@ -208,7 +208,7 @@
 
       <acqinfo>
           <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
-          <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" /> 
+          <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" />
           <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
 
           <xsl:if test="$accession != ''">
@@ -288,6 +288,19 @@
           </xsl:for-each>
       </userestrict>
 
+      <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
+      <xsl:for-each select="$object_type">
+          <odd>
+              <p>Object type: <xsl:value-of select="$object_type" /></p>
+          </odd>
+      </xsl:for-each>
+      <xsl:variable name="classification" select="field[@name = 'classification']/normalize-space()" />
+      <xsl:for-each select="$classification">
+          <odd>
+              <p>EMU Classification: <xsl:value-of select="$classification" /></p>
+          </odd>
+      </xsl:for-each>
+
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
       <separatedmaterial>
       </separatedmaterial>
@@ -329,7 +342,7 @@
   </xsl:template>
 
   <xsl:template name="components">
-    
+
     <!-- level: 0 when in <archdesc>
                 1 - 12 for <c01> - <c12> -->
     <xsl:param name="level" as="xs:integer" />
@@ -367,7 +380,7 @@
     </xsl:if>
   </xsl:template>
 
-    
+
   <!-- get rid of any trailing content or structure-->
   <xsl:template match="text()|@*"/>
 </xsl:stylesheet>
