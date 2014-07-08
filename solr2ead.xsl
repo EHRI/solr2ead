@@ -142,6 +142,16 @@
                   </p>
               </xsl:for-each>
           </origination>
+
+          <!-- document_quantity and document_container are similar -->
+          <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
+          <xsl:variable name="document_container" select="field[@name = 'document_container']/normalize-space()" />
+          <xsl:for-each select="$document_quantity">
+            <xsl:variable name="i" select="position()" />
+            <container type="{$document_container[$i]}">
+                <xsl:value-of select="$document_quantity" />
+            </container>
+          </xsl:for-each>
           <physdesc>
               <xsl:variable name="extent_quantity" select="field[@name = 'extent_quantity']/normalize-space()" />
               <xsl:variable name="extent_unit" select="field[@name = 'extent_unit']/normalize-space()" />
@@ -160,16 +170,6 @@
                   <extent>
                       <xsl:copy-of select="$extent" />
                   </extent>
-              </xsl:for-each>
-
-              <!-- document_quantity and document_container are similar -->
-              <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
-              <xsl:variable name="document_container" select="field[@name = 'document_container']/normalize-space()" />
-              <xsl:for-each select="$document_quantity">
-                <xsl:variable name="i" select="position()" />
-                <extent>
-                    <xsl:value-of select="concat($document_quantity[$i], ' ', $document_container[$i])"/>
-                </extent>
               </xsl:for-each>
 
               <xsl:variable name="extent" select="field[@name = 'extent']/normalize-space()" />
@@ -198,11 +198,6 @@
                   <language><xsl:value-of select="./normalize-space()" /></language>
               </xsl:for-each>
           </langmaterial>
-          <repository>
-
-          </repository>
-          <abstract>
-          </abstract>
       </did>
 
       <arrangement>
