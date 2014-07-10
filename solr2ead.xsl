@@ -105,7 +105,27 @@
   </xsl:template>
 
   <xsl:template name="normal_description">
+          <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
+          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
+<!--           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" /> -->
+          <xsl:variable name="names">
+            <xsl:for-each select="$creator_name">
+                <xsl:variable name="i" select="position()"/>
+                <xsl:element name="name">
+                    <xsl:if test="$creator_role[$i] != ''">
+                        <xsl:attribute name="role" select="$creator_role[$i]"/>
+                    </xsl:if>
+                    <xsl:value-of select="$creator_name[$i]"/>
+                </xsl:element>
+            </xsl:for-each>
+          </xsl:variable>
+          <!-- Lists of roles are lower case, make sure to check lower case strings against these lists -->
+          <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
+          <xsl:variable name="subject_roles" select="('subject')"/>
+          <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
+          
     <did>
+          
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
           <xsl:variable name="acc_num" select="field[@name = 'accession_number']/normalize-space()" />
           <unittitle>
@@ -131,6 +151,11 @@
               <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
               <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
+              <xsl:for-each select="$names[not(role) or lower-case(role)=$creator_roles]">
+                  <p>
+                      <xsl:value-of select="." />
+                  </p>
+              </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
                   <p>
                       <xsl:copy-of select="$finding_aid_provenance" />
@@ -206,6 +231,11 @@
 
       <custodhist>
           <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
+          <xsl:for-each select="$names[lower-case(role)=$custodial_roles]">
+              <p>
+                  <xsl:copy-of select="$names" />
+              </p>
+          </xsl:for-each>
           <xsl:for-each select="$provenance">
               <p>
                   <xsl:copy-of select="$provenance" />
@@ -345,6 +375,10 @@
                   <xsl:value-of select="./normalize-space()" />
               </genreform>
           </xsl:for-each>
+          <xsl:for-each select="$names[lower-case(role)=$subject_roles]">
+              <xsl:copy-of select="$names" />
+          </xsl:for-each>
+              
       </controlaccess>
   </xsl:template>
 
