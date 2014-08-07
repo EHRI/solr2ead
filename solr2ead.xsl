@@ -107,9 +107,10 @@
   </xsl:template>
 
   <xsl:template name="normal_description">
+        <!-- First select names -->
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
           <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
-<!--           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" /> -->
+
           <xsl:variable name="names">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
@@ -155,9 +156,9 @@
 
 <!--         <xsl:if test="$names[lower-case(role)=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">       -->
           <origination>
-              <xsl:for-each select="$names[@role=$creator_roles]/node()">
+              <xsl:for-each select="$names[@role=$creator_roles]">
                   <p>
-                      JA, creator! - <xsl:copy-of select="." />
+                      JA, creator! - <xsl:copy-of select="node()" />
                   </p>
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
