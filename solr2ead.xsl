@@ -108,7 +108,7 @@
 
   <xsl:template name="normal_description">
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
-          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
+          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()/lower-case()" />
 <!--           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" /> -->
           <xsl:variable name="names">
             <xsl:for-each select="$creator_name">
@@ -153,9 +153,9 @@
         <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
         <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
-        <xsl:if test="$names[lower-case(role)=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">      
+<!--         <xsl:if test="$names[lower-case(role)=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">       -->
           <origination>
-              <xsl:for-each select="$names[lower-case(role)=$creator_roles]/node()">
+              <xsl:for-each select="$names[@role=$creator_roles]/node()">
                   <p>
                       JA, creator! - <xsl:copy-of select="." />
                   </p>
@@ -171,7 +171,7 @@
                   </p>
               </xsl:for-each>
           </origination>
-        </xsl:if>
+<!--         </xsl:if> -->
 
           <!-- document_quantity and document_container are similar -->
           <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
