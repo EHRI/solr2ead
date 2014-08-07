@@ -156,9 +156,9 @@
 
 <!--         <xsl:if test="$names[lower-case(role)=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">       -->
           <origination>
-              <xsl:for-each select="$names[@role=$creator_roles]">
+              <xsl:for-each select="$names">
                   <p>
-                      JA, creator! - <xsl:copy-of select="node()" />
+                      JA, creator! - <xsl:copy-of select="." />
                   </p>
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
