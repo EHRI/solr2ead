@@ -108,14 +108,14 @@
 
   <xsl:template name="normal_description">
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
-          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()/lower-case()" />
+          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
 <!--           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" /> -->
           <xsl:variable name="names">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
                 <xsl:element name="name">
                     <xsl:if test="$creator_role[$i] != ''">
-                        <xsl:attribute name="role" select="$creator_role[$i]"/>
+                        <xsl:attribute name="role" select="lower-case($creator_role[$i])"/>
                     </xsl:if>
                     <xsl:value-of select="$creator_name[$i]"/>
                 </xsl:element>
