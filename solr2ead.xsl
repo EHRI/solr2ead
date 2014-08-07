@@ -277,13 +277,16 @@
       </xsl:if>
 
       <!-- biographic description of the person or organization -->
-      <bioghist>
-          <xsl:for-each select="field[@name = 'creator_bio']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </bioghist>
+      <xsl:variable name="bioghist" select="field[@name = 'creator_bio']/normalize-space()" />
+      <xsl:if test="bioghist != ''" >
+          <bioghist>
+              <xsl:for-each select="bioghist">
+                  <p>
+                      <xsl:value-of select="." />
+                  </p>
+              </xsl:for-each>
+          </bioghist>
+      </xsl:if>
 
       <!-- a detailed narrative description of the collection material -->
       <scopecontent>
