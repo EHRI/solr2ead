@@ -231,13 +231,16 @@
           </langmaterial>
       </did>
 
-      <arrangement>
-          <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
-      </arrangement>
+      <xsl:variable name="arrangement" select="field[@name = 'arrangement']/normalize-space()" />
+      <xsl:if test="$arrangement != ''">
+          <arrangement>
+              <xsl:value-of select="$arrangement" />
+          </arrangement>
+      </xsl:if>
 
       <custodhist>
           <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
-          <xsl:for-each select="$names[lower-case(role)=$custodial_roles]">
+          <xsl:for-each select="$names[@role=$custodial_roles]">
               <p>
                   <xsl:copy-of select="$names" />
               </p>
@@ -312,8 +315,10 @@
       </scopecontent>
 
       <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
-      <relatedmaterial>
+     <!-- 
+ <relatedmaterial>
       </relatedmaterial>
+ -->
 
       <accessrestrict>
           <xsl:for-each select="field[@name = 'conditions_access']">
@@ -345,8 +350,10 @@
       </xsl:for-each>
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
-      <separatedmaterial>
+      <!-- 
+<separatedmaterial>
       </separatedmaterial>
+ -->
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
