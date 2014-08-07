@@ -111,7 +111,7 @@
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
           <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
 
-          <xsl:variable name="names" as="xsl:element*">
+          <xsl:variable name="names" as="xs:element*">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
                 <xsl:element name="name">
