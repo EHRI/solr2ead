@@ -111,7 +111,7 @@
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
           <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
 
-          <xsl:variable name="names" as="xs:node*">
+          <xsl:variable name="names">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
                 <xsl:element name="name">
@@ -154,13 +154,13 @@
         <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
         <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
-<!--         <xsl:if test="$names[lower-case(role)=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">       -->
+        <xsl:if test="$names[@role=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">      
           <origination>
-              <xsl:for-each select="$names">
+<!--               <xsl:for-each select="$names"> -->
                   <p>
-                      JA, creator! - <xsl:copy-of select="." />
+                      JA, creator! - <xsl:copy-of select="$names[@role=$creator_roles]" />
                   </p>
-              </xsl:for-each>
+<!--               </xsl:for-each> -->
               <xsl:for-each select="$finding_aid_provenance">
                   <p>
                       JA, f-a-prov! - <xsl:copy-of select="$finding_aid_provenance" />
@@ -172,7 +172,7 @@
                   </p>
               </xsl:for-each>
           </origination>
-<!--         </xsl:if> -->
+        </xsl:if>
 
           <!-- document_quantity and document_container are similar -->
           <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
