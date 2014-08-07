@@ -154,7 +154,7 @@
         <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
         <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
-        <xsl:if test="$names[@role=$creator_roles] != () or $finding_aid_provenance != () or $historical_provenance != ()">      
+        <xsl:if test="not(empty(($names[@role=$creator_roles], $finding_aid_provenance, $historical_provenance)))">      
           <origination>
 <!--               <xsl:for-each select="$names"> -->
                   <p>
