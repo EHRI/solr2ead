@@ -19,9 +19,13 @@
       <!-- Work on top-level <doc>s:
            - <doc> without assoc_parent_irn field
            - <doc> with assoc_parent_irn that does not match any existing <doc>'s irn -->
-      <xsl:for-each select="doc">
-        <xsl:variable name="parent_irn" select="field[@name = 'assoc_parent_irn']/text()" />
-        <xsl:if test="not($parent_irn) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])">
+      <xsl:apply-templates match="doc[not(field[@name = 'assoc_parent_irn']/text()) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])]" />
+  </xsl:template>
+  
+  <xsl:template match="doc">
+      <xsl:for-each select=".">
+<!--         <xsl:variable name="parent_irn" select="field[@name = 'assoc_parent_irn']/text()" /> -->
+<!--         <xsl:if test="not($parent_irn) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])"> -->
             <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
             <xsl:result-document href="{$filename}" method="xml">
               <ead>
@@ -31,7 +35,7 @@
                 <xsl:apply-templates />
               </ead>
             </xsl:result-document>
-        </xsl:if>
+<!--         </xsl:if> -->
       </xsl:for-each>
   </xsl:template>
 
