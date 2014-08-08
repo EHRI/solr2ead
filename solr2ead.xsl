@@ -126,9 +126,9 @@
           <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
           <xsl:variable name="subject_roles" select="('subject')"/>
           <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
-          <xsl:variable name="creator_names" select="$names[@role=$creator_roles]"/>
-          <xsl:variable name="subject_names" select="$names[@role=$subject_roles]"/>
-          <xsl:variable name="custodial_names" select="$names[@role=$custodial_roles]"/>
+          <xsl:variable name="creator_names" select="$names[./@role=$creator_roles]"/>
+          <xsl:variable name="subject_names" select="$names[./@role=$subject_roles]"/>
+          <xsl:variable name="custodial_names" select="$names[./@role=$custodial_roles]"/>
     <did>
           
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
@@ -277,7 +277,7 @@
       </acqinfo>
 
       <!-- Optional funding note field -->
-      <xsl:apply-templates select="field[@name = 'funding_note']/normalize-space()" />
+      <xsl:apply-templates select="field[@name = 'funding_note']" />
 
       <!-- biographic description of the person or organization -->
       <xsl:variable name="bioghist" select="field[@name = 'creator_bio']/normalize-space()" />
@@ -409,7 +409,7 @@
     
     <xsl:template match="field[@name = 'funding_note']">
         <note>
-            <p><xsl:copy-of select="."/></p>
+            <p><xsl:copy-of select="normalize-space(.)"/></p>
         </note>
     </xsl:template>
 
