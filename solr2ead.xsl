@@ -19,7 +19,7 @@
       <!-- Work on top-level <doc>s:
            - <doc> without assoc_parent_irn field
            - <doc> with assoc_parent_irn that does not match any existing <doc>'s irn -->
-      <xsl:apply-templates match="doc[not(field[@name = 'assoc_parent_irn']/text()) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])]" />
+      <xsl:apply-templates select="doc[not(field[@name = 'assoc_parent_irn']/text()) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])]" />
   </xsl:template>
   
   <xsl:template match="doc">
