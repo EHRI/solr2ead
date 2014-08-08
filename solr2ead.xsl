@@ -32,7 +32,7 @@
                 <xsl:call-template name="header"/>
                 <xsl:call-template name="fm"/>
                 <xsl:call-template name="description_with_dsc"/>
-                <xsl:apply-templates />
+                <xsl:apply-templates select="field[not(@name='conditions_access')]"/>
               </ead>
             </xsl:result-document>
 <!--         </xsl:if> -->
@@ -284,12 +284,12 @@
       </xsl:if>
 
       <!-- a detailed narrative description of the collection material -->
-      <scopecontent>
           <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
           <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
           <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
           <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
-
+      <xsl:if test="not(empty(($brief_desc, $collection_summary, $interview_summary, $scope_content)))">
+      <scopecontent>
           <xsl:for-each select="$brief_desc">
               <p>
                   <xsl:copy-of select="$brief_desc" />
@@ -311,6 +311,7 @@
               </p>
           </xsl:for-each>
       </scopecontent>
+      </xsl:if>
 
       <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
      <!-- 
