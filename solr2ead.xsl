@@ -62,7 +62,7 @@
           </filedesc>
           <profiledesc>
               <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
+                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="format-date($convertdate, '[Y0001]-[M01]-[D01]')" />
                       <xsl:value-of select="$convertdatetime" />
                   </date>
               </creation>
