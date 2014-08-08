@@ -37,7 +37,8 @@
 
   <!-- header: <eadheader> -->
   <xsl:template name="header">
-      <xsl:variable name="convertdate" select="current-dateTime()" />
+      <xsl:variable name="convertdatetime" select="current-dateTime()" />
+      <xsl:variable name="convertdate" select="current-date()" />
       <eadheader>
           <eadid>
               <xsl:value-of select="field[@name = 'id']/normalize-space()" />
@@ -61,8 +62,8 @@
           </filedesc>
           <profiledesc>
               <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="xs:date($convertdate)" />
-                      <xsl:value-of select="$convertdate" />
+                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
+                      <xsl:value-of select="$convertdatetime" />
                   </date>
               </creation>
               <langusage><language langcode="eng">English</language></langusage>
