@@ -32,7 +32,7 @@
                 <xsl:call-template name="header"/>
                 <xsl:call-template name="fm"/>
                 <xsl:call-template name="description_with_dsc"/>
-                <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement'))]"/>
+                <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement','creator_name','creator_role','finding_aid_provenance','historical_provenance'))]"/>
               </ead>
             </xsl:result-document>
 <!--         </xsl:if> -->
@@ -156,22 +156,11 @@
               </unitid>
           </xsl:if>
           
-        <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-        <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
+        <xsl:variable name="finding_aid_provenance" select="field[@name = '']/normalize-space()" />
+        <xsl:variable name="historical_provenance" select="field[@name = '']/normalize-space()" />
 
-        <xsl:if test="not(empty(($names[@name=$creator_roles], $finding_aid_provenance, $historical_provenance)))">      
-          <origination>
-              <xsl:for-each select="$names[@name=$creator_roles]">
-                  <xsl:copy-of select="$names[@name=$creator_roles]" />
-              </xsl:for-each>
-              <xsl:for-each select="$finding_aid_provenance">
-                  <xsl:copy-of select="$finding_aid_provenance" />
-              </xsl:for-each>
-              <xsl:for-each select="$historical_provenance">
-                  <xsl:copy-of select="$historical_provenance" />
-              </xsl:for-each>
-          </origination>
-        </xsl:if>
+        <xsl:apply-templates select="field[@name = ('creator_name','creator_role','finding_aid_provenance','historical_provenance')]" />
+        
 
           <!-- document_quantity and document_container are similar -->
           <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
@@ -424,6 +413,44 @@
     </xsl:if>
   </xsl:template>
 
+    <xsl:template match="field[@name = ('creator_name','creator_role','finding_aid_provenance','historical_provenance')]">
+        
+          <origination>
+              <xsl:apply-templates select=".[@name = ('creator_name','creator_role')]" mode="creator"/>
+              
+              <xsl:for-each select="node()[@name = 'finding_aid_provenance']">
+                  <xsl:copy-of select="text()" />
+              </xsl:for-each>
+              <xsl:for-each select="$historical_provenance">
+                  <xsl:copy-of select="$historical_provenance" />
+              </xsl:for-each>
+          </origination>
+
+    </xsl:template>
+    
+    <xsl:template match="field[@name = ('creator_name','creator_role')]" mode="creator">
+        <xsl:variable name="creator_name" select="field[@name = 'creator_name']" />
+        <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
+
+        <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
+        <xsl:variable name="names">
+          <xsl:for-each select="$creator_name">
+              <xsl:variable name="i" select="position()"/>
+              <xsl:if test="lower-case($creator_role[$i]) = $creator_roles">
+                  <xsl:element name="name">
+                      <xsl:if test="$creator_role[$i] != ''">
+                          <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                      </xsl:if>
+                      <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                  </xsl:element>
+              </xsl:if>
+          </xsl:for-each>
+        </xsl:variable>
+        <!-- Lists of roles are lower case, make sure to check lower case strings against these lists -->
+        <xsl:variable name="subject_roles" select="('subject')"/>
+        <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
+    </xsl:template>
+    
 
     <xsl:template match="field[@name = 'conditions_access']">
       <accessrestrict>
