@@ -19,7 +19,7 @@
       <!-- Work on top-level <doc>s:
            - <doc> without assoc_parent_irn field
            - <doc> with assoc_parent_irn that does not match any existing <doc>'s irn -->
-      <xsl:for-each select="//doc">
+      <xsl:for-each select="doc">
         <xsl:variable name="parent_irn" select="field[@name = 'assoc_parent_irn']/text()" />
         <xsl:if test="not($parent_irn) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])">
             <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
