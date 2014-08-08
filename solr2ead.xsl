@@ -248,21 +248,23 @@
           </custodhist>
       </xsl:if>
 
-      <acqinfo>
-          <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
-          <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" />
-          <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
-
-          <xsl:if test="$accession != ''">
-              <p>Accession number: <xsl:copy-of select="$accession" /></p>
-          </xsl:if>
-          <xsl:if test="$source != ''">
-              <p>Source: <xsl:copy-of select="$source" /></p>
-          </xsl:if>
-          <xsl:if test="$credit != ''">
-              <p>Credit: <xsl:copy-of select="$credit" /></p>
-          </xsl:if>
-      </acqinfo>
+      <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
+      <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" />
+      <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
+      <xsl:if test="not(empty(($accession, $source, $credit)))">
+          <acqinfo>
+    
+              <xsl:if test="$accession != ''">
+                  <p>Accession number: <xsl:copy-of select="$accession" /></p>
+              </xsl:if>
+              <xsl:if test="$source != ''">
+                  <p>Source: <xsl:copy-of select="$source" /></p>
+              </xsl:if>
+              <xsl:if test="$credit != ''">
+                  <p>Credit: <xsl:copy-of select="$credit" /></p>
+              </xsl:if>
+          </acqinfo>
+      </xsl:if>
 
       <!-- Optional funding note field -->
       <xsl:apply-templates select="field[@name = 'funding_note']" />
