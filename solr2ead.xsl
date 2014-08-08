@@ -277,12 +277,7 @@
       </acqinfo>
 
       <!-- Optional funding note field -->
-      <xsl:variable name="funding_note" select="field[@name = 'funding_note']/normalize-space()" />
-      <xsl:if test="$funding_note != ''">
-          <note>
-              <p><xsl:copy-of select="$funding_note"/></p>
-          </note>
-      </xsl:if>
+      <xsl:apply-templates select="field[@name = 'funding_note']/normalize-space()" />
 
       <!-- biographic description of the person or organization -->
       <xsl:variable name="bioghist" select="field[@name = 'creator_bio']/normalize-space()" />
@@ -410,6 +405,12 @@
         <arrangement>
             <xsl:value-of select="normalize-space(.)" />
         </arrangement>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'funding_note']">
+        <note>
+            <p><xsl:copy-of select="."/></p>
+        </note>
     </xsl:template>
 
   <xsl:template name="components">
