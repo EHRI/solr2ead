@@ -32,7 +32,7 @@
                 <xsl:call-template name="header"/>
                 <xsl:call-template name="fm"/>
                 <xsl:call-template name="description_with_dsc"/>
-                <xsl:apply-templates select="field[not(@name='conditions_access')]"/>
+                <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement'))]"/>
               </ead>
             </xsl:result-document>
 <!--         </xsl:if> -->
@@ -446,7 +446,7 @@
     
     <xsl:template match="field[@name = 'arrangement']">
         <arrangement>
-            <xsl:value-of select="normalize-space(.)" />
+            <p><xsl:value-of select="normalize-space(.)" /></p>
         </arrangement>
     </xsl:template>
     
