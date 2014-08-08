@@ -233,13 +233,15 @@
           </langmaterial>
       </did>
 
-      <xsl:apply-templates match="field[@name = 'arrangement']" />
-      <xsl:variable name="arrangement" select="field[@name = 'arrangement']" />
+      <xsl:apply-templates select="field[@name = 'arrangement']" />
+      <!-- 
+<xsl:variable name="arrangement" select="field[@name = 'arrangement']" />
       <xsl:if test="$arrangement != ''">
           <arrangement>
               <xsl:value-of select="$arrangement" />
           </arrangement>
       </xsl:if>
+ -->
       
       
       <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
