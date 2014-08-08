@@ -159,10 +159,10 @@
         <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
         <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
-        <xsl:if test="not(empty(($creator_names, $finding_aid_provenance, $historical_provenance)))">      
+        <xsl:if test="not(empty(($names[@name=$creator_roles], $finding_aid_provenance, $historical_provenance)))">      
           <origination>
-              <xsl:for-each select="$creator_names">
-                  <xsl:copy-of select="$creator_names" />
+              <xsl:for-each select="$names[@name=$creator_roles]">
+                  <xsl:copy-of select="$names[@name=$creator_roles]" />
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
                   <xsl:copy-of select="$finding_aid_provenance" />
