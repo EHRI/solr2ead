@@ -378,37 +378,6 @@
       </controlaccess>
   </xsl:template>
   
-    <xsl:template match="field[@name = 'conditions_access']">
-      <accessrestrict>
-          <xsl:for-each select=".">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </accessrestrict>
-    </xsl:template>
-    
-    <xsl:template match="field[@name = 'conditions_use']">
-      <userestrict>
-          <xsl:for-each select=".">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </userestrict>
-    </xsl:template>
-    
-    <xsl:template match="field[@name = 'arrangement']">
-        <arrangement>
-            <xsl:value-of select="normalize-space(.)" />
-        </arrangement>
-    </xsl:template>
-    
-    <xsl:template match="field[@name = 'funding_note']">
-        <note>
-            <p><xsl:copy-of select="normalize-space(.)"/></p>
-        </note>
-    </xsl:template>
 
   <xsl:template name="components">
 
@@ -449,6 +418,38 @@
     </xsl:if>
   </xsl:template>
 
+
+    <xsl:template match="field[@name = 'conditions_access']">
+      <accessrestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </accessrestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'conditions_use']">
+      <userestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </userestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'arrangement']">
+        <arrangement>
+            <xsl:value-of select="normalize-space(.)" />
+        </arrangement>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'funding_note']">
+        <note>
+            <p><xsl:copy-of select="normalize-space(.)"/></p>
+        </note>
+    </xsl:template>
 
   <!-- get rid of any trailing content or structure-->
   <xsl:template match="text()|@*"/>
