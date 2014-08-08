@@ -421,8 +421,8 @@
               <xsl:for-each select="node()[@name = 'finding_aid_provenance']">
                   <xsl:copy-of select="text()" />
               </xsl:for-each>
-              <xsl:for-each select="$historical_provenance">
-                  <xsl:copy-of select="$historical_provenance" />
+              <xsl:for-each select="node()[@name = 'finding_aid_provenance']">
+                  <xsl:copy-of select="text()" />
               </xsl:for-each>
           </origination>
 
@@ -433,7 +433,7 @@
         <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
 
         <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
-        <xsl:variable name="names">
+<!--         <xsl:variable name="names"> -->
           <xsl:for-each select="$creator_name">
               <xsl:variable name="i" select="position()"/>
               <xsl:if test="lower-case($creator_role[$i]) = $creator_roles">
@@ -445,10 +445,8 @@
                   </xsl:element>
               </xsl:if>
           </xsl:for-each>
-        </xsl:variable>
-        <!-- Lists of roles are lower case, make sure to check lower case strings against these lists -->
-        <xsl:variable name="subject_roles" select="('subject')"/>
-        <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
+<!--         </xsl:variable> -->
+        
     </xsl:template>
     
 
