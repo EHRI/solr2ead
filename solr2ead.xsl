@@ -341,7 +341,8 @@
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
-      <xsl:if test="not(empty(field[starts-with(@name, 'subject_')]))">
+  <!-- subject_corporate subject_person subject_topical subject_genre_form subject_geography subject_meeting_name subject_uniform_title -->
+      <xsl:if test="not(empty(field[@name= ('subject_corporate', 'subject_person', 'subject_topical', 'subject_genre_form', 'subject_geography', 'subject_uniform_title')]))">
       <controlaccess>
           <xsl:for-each select="field[@name = 'subject_person']">
               <persname>
