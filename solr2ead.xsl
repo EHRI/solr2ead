@@ -111,17 +111,17 @@
 
   <xsl:template name="normal_description">
         <!-- First select names -->
-          <xsl:variable name="creator_name" select="field[@name = 'creator_name']/normalize-space()" />
-          <xsl:variable name="creator_role" select="field[@name = 'creator_role']/normalize-space()" />
+          <xsl:variable name="creator_name" select="field[@name = 'creator_name']" />
+          <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
 
           <xsl:variable name="names">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
                 <xsl:element name="name">
                     <xsl:if test="$creator_role[$i] != ''">
-                        <xsl:attribute name="role" select="lower-case($creator_role[$i])"/>
+                        <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
                     </xsl:if>
-                    <xsl:value-of select="$creator_name[$i]"/>
+                    <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
                 </xsl:element>
             </xsl:for-each>
           </xsl:variable>
@@ -162,7 +162,7 @@
         <xsl:if test="not(empty(($creator_names, $finding_aid_provenance, $historical_provenance)))">      
           <origination>
               <xsl:for-each select="$creator_names">
-                  <xsl:copy-of select="." />
+                  <xsl:copy-of select="$creator_names" />
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
                   <xsl:copy-of select="$finding_aid_provenance" />
@@ -178,7 +178,7 @@
           <xsl:variable name="document_container" select="field[@name = 'document_container']/normalize-space()" />
           <xsl:for-each select="$document_quantity">
             <xsl:variable name="i" select="position()" />
-            <container type="{$document_container[$i]}">
+            <container type="{tokenize($document_container[$i],'\s+')[1]}">
                 <xsl:value-of select="$document_quantity" />
             </container>
           </xsl:for-each>
