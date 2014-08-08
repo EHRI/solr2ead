@@ -418,10 +418,10 @@
           <origination>
               <xsl:apply-templates select=".[@name = ('creator_name','creator_role')]" mode="creator"/>
               
-              <xsl:for-each select="node()[@name = 'finding_aid_provenance']">
+              <xsl:for-each select=".[@name = 'finding_aid_provenance']">
                   <xsl:copy-of select="text()" />
               </xsl:for-each>
-              <xsl:for-each select="node()[@name = 'finding_aid_provenance']">
+              <xsl:for-each select=".[@name = 'historical_provenance']">
                   <xsl:copy-of select="text()" />
               </xsl:for-each>
           </origination>
@@ -434,17 +434,17 @@
 
         <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
 <!--         <xsl:variable name="names"> -->
-          <xsl:for-each select="$creator_name">
-              <xsl:variable name="i" select="position()"/>
-              <xsl:if test="lower-case($creator_role[$i]) = $creator_roles">
-                  <xsl:element name="name">
-                      <xsl:if test="$creator_role[$i] != ''">
-                          <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
-                      </xsl:if>
-                      <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
-                  </xsl:element>
-              </xsl:if>
-          </xsl:for-each>
+        <xsl:for-each select="$creator_name">
+            <xsl:variable name="i" select="position()"/>
+            <xsl:if test="lower-case($creator_role[$i]) = $creator_roles">
+                <xsl:element name="name">
+                    <xsl:if test="$creator_role[$i] != ''">
+                        <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                    </xsl:if>
+                    <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                </xsl:element>
+            </xsl:if>
+        </xsl:for-each>
 <!--         </xsl:variable> -->
         
     </xsl:template>
