@@ -429,9 +429,9 @@
     </xsl:template>
     
     <xsl:template match="field[@name = ('creator_name','creator_role')]" mode="creator">
-        <xsl:variable name="creator_name" select="field[@name = 'creator_name']" />
-        <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
-
+        <xsl:variable name="creator_name" select=".[@name = 'creator_name']" />
+        <xsl:variable name="creator_role" select=".[@name = 'creator_role']" />
+creator template
         <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
 <!--         <xsl:variable name="names"> -->
         <xsl:for-each select="$creator_name">
