@@ -93,9 +93,7 @@
          this template is called for top-level descriptions -->
   <xsl:template name="description_with_dsc">
     <!-- get the irn to retrieve components -->
-    <xsl:variable name="irn">
-      <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
-    </xsl:variable>
+    <xsl:variable name="irn" select="field[@name = 'irn']/normalize-space()" />
 
     <!-- NB: Level attribute is mandatory -->
     <archdesc level="otherlevel">
@@ -126,9 +124,9 @@
           <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
           <xsl:variable name="subject_roles" select="('subject')"/>
           <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
-          <xsl:variable name="creator_names" select="$names[./@role=$creator_roles]"/>
-          <xsl:variable name="subject_names" select="$names[./@role=$subject_roles]"/>
-          <xsl:variable name="custodial_names" select="$names[./@role=$custodial_roles]"/>
+          <xsl:variable name="creator_names" select="$names[name/@role=$creator_roles]"/>
+          <xsl:variable name="subject_names" select="$names[name/@role=$subject_roles]"/>
+          <xsl:variable name="custodial_names" select="$names[name/@role=$custodial_roles]"/>
     <did>
           
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
@@ -159,9 +157,7 @@
         <xsl:if test="not(empty(($creator_names, $finding_aid_provenance, $historical_provenance)))">      
           <origination>
               <xsl:for-each select="$creator_names">
-                  <p>
-                      JA, creator! - <xsl:copy-of select="." />
-                  </p>
+                  <xsl:copy-of select="." />
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
                   <p>
@@ -205,8 +201,6 @@
                   </extent>
               </xsl:for-each>
 
-              <xsl:variable name="extent" select="field[@name = 'extent']/normalize-space()" />
-
               <xsl:variable name="dimensions" select="field[@name = 'dimensions']/normalize-space()" />
               <xsl:for-each select="$dimensions">
                   <dimensions>
@@ -234,14 +228,7 @@
       </did>
 
       <xsl:apply-templates select="field[@name = 'arrangement']" />
-      <!-- 
-<xsl:variable name="arrangement" select="field[@name = 'arrangement']" />
-      <xsl:if test="$arrangement != ''">
-          <arrangement>
-              <xsl:value-of select="$arrangement" />
-          </arrangement>
-      </xsl:if>
- -->
+      
       
       
       <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
@@ -326,21 +313,10 @@
       </relatedmaterial>
  -->
 
-      <accessrestrict>
-          <xsl:for-each select="field[@name = 'conditions_access']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </accessrestrict>
+      <xsl:apply-templates select="field[@name = 'conditions_access']" />
 
-      <userestrict>
-          <xsl:for-each select="field[@name = 'conditions_use']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </userestrict>
+      <xsl:apply-templates select="field[@name = 'conditions_use']" />
+      
 
       <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
       <xsl:for-each select="$object_type">
@@ -401,6 +377,26 @@
       </controlaccess>
   </xsl:template>
   
+    <xsl:template match="field[@name = 'conditions_access']">
+      <accessrestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </accessrestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'conditions_use']">
+      <userestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </userestrict>
+    </xsl:template>
+    
     <xsl:template match="field[@name = 'arrangement']">
         <arrangement>
             <xsl:value-of select="normalize-space(.)" />
