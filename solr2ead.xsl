@@ -61,7 +61,7 @@
           </filedesc>
           <profiledesc>
               <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
+                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="xs:date($convertdate)" />
                       <xsl:value-of select="$convertdate" />
                   </date>
               </creation>
@@ -126,7 +126,9 @@
           <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
           <xsl:variable name="subject_roles" select="('subject')"/>
           <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
-          
+          <xsl:variable name="creator_names" select="$names[@role=$creator_roles]"/>
+          <xsl:variable name="subject_names" select="$names[@role=$subject_roles]"/>
+          <xsl:variable name="custodial_names" select="$names[@role=$custodial_roles]"/>
     <did>
           
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
@@ -154,13 +156,13 @@
         <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
         <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
 
-        <xsl:if test="not(empty(($names[@role=$creator_roles], $finding_aid_provenance, $historical_provenance)))">      
+        <xsl:if test="not(empty(($creator_names, $finding_aid_provenance, $historical_provenance)))">      
           <origination>
-<!--               <xsl:for-each select="$names"> -->
+              <xsl:for-each select="$creator_names">
                   <p>
-                      JA, creator! - <xsl:copy-of select="$names[@role=$creator_roles]" />
+                      JA, creator! - <xsl:copy-of select="." />
                   </p>
-<!--               </xsl:for-each> -->
+              </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
                   <p>
                       JA, f-a-prov! - <xsl:copy-of select="$finding_aid_provenance" />
@@ -231,26 +233,30 @@
           </langmaterial>
       </did>
 
-      <xsl:variable name="arrangement" select="field[@name = 'arrangement']/normalize-space()" />
+      <xsl:apply-templates match="field[@name = 'arrangement']" />
+      <xsl:variable name="arrangement" select="field[@name = 'arrangement']" />
       <xsl:if test="$arrangement != ''">
           <arrangement>
               <xsl:value-of select="$arrangement" />
           </arrangement>
       </xsl:if>
-
-      <custodhist>
-          <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
-          <xsl:for-each select="$names[@role=$custodial_roles]">
-              <p>
-                  <xsl:copy-of select="$names" />
-              </p>
-          </xsl:for-each>
-          <xsl:for-each select="$provenance">
-              <p>
-                  <xsl:copy-of select="$provenance" />
-              </p>
-          </xsl:for-each>
-      </custodhist>
+      
+      
+      <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
+      <xsl:if test="not(empty(($provenance, $custodial_names)))">
+          <custodhist>
+              <xsl:for-each select="$custodial_names">
+                  <p>
+                      <xsl:copy-of select="." />
+                  </p>
+              </xsl:for-each>
+              <xsl:for-each select="$provenance">
+                  <p>
+                      <xsl:copy-of select="$provenance" />
+                  </p>
+              </xsl:for-each>
+          </custodhist>
+      </xsl:if>
 
       <acqinfo>
           <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
@@ -397,6 +403,12 @@
               
       </controlaccess>
   </xsl:template>
+  
+    <xsl:template match="field[@name = 'arrangement']">
+        <arrangement>
+            <xsl:value-of select="normalize-space(.)" />
+        </arrangement>
+    </xsl:template>
 
   <xsl:template name="components">
 
