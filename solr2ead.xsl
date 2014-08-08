@@ -165,14 +165,10 @@
                   <xsl:copy-of select="." />
               </xsl:for-each>
               <xsl:for-each select="$finding_aid_provenance">
-                  <p>
-                      JA, f-a-prov! - <xsl:copy-of select="$finding_aid_provenance" />
-                  </p>
+                  <xsl:copy-of select="$finding_aid_provenance" />
               </xsl:for-each>
               <xsl:for-each select="$historical_provenance">
-                  <p>
-                      JA, his-prov! - <xsl:copy-of select="$historical_provenance" />
-                  </p>
+                  <xsl:copy-of select="$historical_provenance" />
               </xsl:for-each>
           </origination>
         </xsl:if>
@@ -345,6 +341,7 @@
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
+      <xsl:if test="not(empty(field[starts-with(@name, 'subject_')]))">
       <controlaccess>
           <xsl:for-each select="field[@name = 'subject_person']">
               <persname>
@@ -381,6 +378,7 @@
           </xsl:for-each>
               
       </controlaccess>
+      </xsl:if>
   </xsl:template>
   
 
