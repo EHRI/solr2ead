@@ -299,12 +299,25 @@
               <p>Object type: <xsl:value-of select="$object_type" /></p>
           </odd>
       </xsl:for-each>
+      <xsl:variable name="record_type" select="field[@name = 'record_type']/normalize-space()" />
+      <xsl:for-each select="$record_type">
+          <odd>
+              <p>Record Type: <xsl:value-of select="$record_type" /></p>
+          </odd>
+      </xsl:for-each>
       <xsl:variable name="classification" select="field[@name = 'classification']/normalize-space()" />
       <xsl:for-each select="$classification">
           <odd>
               <p>EMU Classification: <xsl:value-of select="$classification" /></p>
           </odd>
       </xsl:for-each>
+      <xsl:variable name="emu_category" select="field[@name = 'emu_category']/normalize-space()" />
+      <xsl:for-each select="$emu_category">
+          <odd>
+              <p>EMU Category: <xsl:value-of select="$emu_category" /></p>
+          </odd>
+      </xsl:for-each>
+
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
       <!--<separatedmaterial>
