@@ -23,20 +23,17 @@
   </xsl:template>
   
   <xsl:template match="doc">
-      <xsl:for-each select=".">
-<!--         <xsl:variable name="parent_irn" select="field[@name = 'assoc_parent_irn']/text()" /> -->
-<!--         <xsl:if test="not($parent_irn) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])"> -->
-            <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
-            <xsl:result-document href="{$filename}" method="xml">
-              <ead>
-                <xsl:call-template name="header"/>
-                <xsl:call-template name="fm"/>
-                <xsl:call-template name="description_with_dsc"/>
-                <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement','creator_name','creator_role','finding_aid_provenance','historical_provenance'))]"/>
-              </ead>
-            </xsl:result-document>
-<!--         </xsl:if> -->
-      </xsl:for-each>
+      <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
+      <xsl:result-document href="{$filename}" method="xml">
+        <ead>
+          <xsl:call-template name="header"/>
+          <xsl:call-template name="fm"/>
+          <xsl:call-template name="description_with_dsc"/>
+          <!-- if we call apply-templates for 'the rest', make sure we don't create duplicates -->
+<!--           <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement','creator_name','creator_role','finding_aid_provenance','historical_provenance'))]"/> -->
+          
+        </ead>
+      </xsl:result-document>
   </xsl:template>
 
   <!-- header: <eadheader> -->
@@ -65,7 +62,7 @@
               </publicationstmt>
           </filedesc>
           <profiledesc>
-              <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
+              <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/EHRI/solr2ead)
                   <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="format-date($convertdate, '[Y0001]-[M01]-[D01]')" />
                       <xsl:value-of select="$convertdatetime" />
                   </date>
@@ -82,10 +79,6 @@
               <titleproper>
                   <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
               </titleproper>
-              <!-- 
-<publisher>
-              </publisher>
- -->
               <date calendar="gregorian" era="ce">
                   <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
               </date>
@@ -113,8 +106,8 @@
         <!-- First select names -->
           <xsl:variable name="creator_name" select="field[@name = 'creator_name']" />
           <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
-
-          <xsl:variable name="names">
+        
+          <xsl:variable name="names" as="element()*">
             <xsl:for-each select="$creator_name">
                 <xsl:variable name="i" select="position()"/>
                 <xsl:element name="name">
@@ -125,15 +118,16 @@
                 </xsl:element>
             </xsl:for-each>
           </xsl:variable>
+          
+          <!-- DEBUG -->
+<!--           <xsl:message select="trace($names, 'names: ')"/> -->
+          
           <!-- Lists of roles are lower case, make sure to check lower case strings against these lists -->
           <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
           <xsl:variable name="subject_roles" select="('subject')"/>
           <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
-          <xsl:variable name="creator_names" select="$names[name/@role=$creator_roles]"/>
-          <xsl:variable name="subject_names" select="$names[name/@role=$subject_roles]"/>
-          <xsl:variable name="custodial_names" select="$names[name/@role=$custodial_roles]"/>
+
     <did>
-          
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
           <xsl:variable name="acc_num" select="field[@name = 'accession_number']/normalize-space()" />
           <unittitle>
@@ -156,11 +150,36 @@
               </unitid>
           </xsl:if>
           
-        <xsl:variable name="finding_aid_provenance" select="field[@name = '']/normalize-space()" />
-        <xsl:variable name="historical_provenance" select="field[@name = '']/normalize-space()" />
 
-        <xsl:apply-templates select="field[@name = ('creator_name','creator_role','finding_aid_provenance','historical_provenance')]" />
+        <!-- origination (can be empty) -->
         
+        <origination>
+            <xsl:for-each select="$creator_name">
+                <xsl:variable name="i" select="position()"/>
+                <xsl:if test="$creator_role[$i] = '' or lower-case($creator_role[$i]/normalize-space()) = $creator_roles">
+                    <xsl:element name="name">
+                        <xsl:if test="$creator_role[$i] != ''">
+                            <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                        </xsl:if>
+                        <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                    </xsl:element>
+                </xsl:if>
+            </xsl:for-each>
+            <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+            <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
+            <xsl:for-each select="$finding_aid_provenance">
+            
+                <xsl:copy-of select="$finding_aid_provenance" />
+                <xsl:if test="position() &lt; last()"><lb/></xsl:if>
+            
+            </xsl:for-each>
+            <xsl:for-each select="$historical_provenance">
+            
+                <xsl:copy-of select="$historical_provenance" />
+                <xsl:if test="position() &lt; last()"><lb/></xsl:if>
+            
+            </xsl:for-each>
+        </origination>
 
           <!-- document_quantity and document_container are similar -->
           <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
@@ -217,17 +236,21 @@
           </langmaterial>
       </did>
 
+      <!-- arrangement -->
       <xsl:apply-templates select="field[@name = 'arrangement']" />
       
       
-      
+      <!-- custodhist -->
       <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
-      <xsl:if test="not(empty(($provenance, $custodial_names)))">
+      <xsl:if test="not(empty(($provenance, $creator_role[lower-case(text()) = $custodial_roles])))">
           <custodhist>
-              <xsl:for-each select="$custodial_names">
-                  <p>
-                      <xsl:copy-of select="." />
-                  </p>
+              <xsl:for-each select="$creator_name">
+                  <xsl:variable name="i" select="position()"/>
+                  <xsl:if test="lower-case($creator_role[$i]/normalize-space()) = $custodial_roles">
+                      <xsl:element name="p">
+                          <xsl:value-of select="$creator_role[$i]/normalize-space()"/>: <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                      </xsl:element>
+                  </xsl:if>
               </xsl:for-each>
               <xsl:for-each select="$provenance">
                   <p>
@@ -260,21 +283,21 @@
 
       <!-- biographic description of the person or organization -->
       <xsl:variable name="bioghist" select="field[@name = 'creator_bio']/normalize-space()" />
-      <xsl:if test="bioghist != ''" >
+      <xsl:if test="$bioghist != ''" >
           <bioghist>
-              <xsl:for-each select="bioghist">
+              <xsl:for-each select="$bioghist">
                   <p>
-                      <xsl:value-of select="." />
+                      <xsl:value-of select="$bioghist" />
                   </p>
               </xsl:for-each>
           </bioghist>
       </xsl:if>
 
       <!-- a detailed narrative description of the collection material -->
-          <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
-          <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
-          <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
-          <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
+      <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
+      <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
+      <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
+      <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
       <xsl:if test="not(empty(($brief_desc, $collection_summary, $interview_summary, $scope_content)))">
       <scopecontent>
           <xsl:for-each select="$brief_desc">
@@ -306,23 +329,18 @@
       </relatedmaterial>
  -->
 
+      <!-- accessrestrict -->
       <xsl:apply-templates select="field[@name = 'conditions_access']" />
 
+      <!-- userestrict -->
       <xsl:apply-templates select="field[@name = 'conditions_use']" />
       
+      <!-- odd "Object type:" -->
+      <xsl:apply-templates select="field[@name = 'object_type']" />
 
-      <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
-      <xsl:for-each select="$object_type">
-          <odd>
-              <p>Object type: <xsl:value-of select="$object_type" /></p>
-          </odd>
-      </xsl:for-each>
-      <xsl:variable name="classification" select="field[@name = 'classification']/normalize-space()" />
-      <xsl:for-each select="$classification">
-          <odd>
-              <p>EMU Classification: <xsl:value-of select="$classification" /></p>
-          </odd>
-      </xsl:for-each>
+      <!-- odd "EMU classification:" -->      
+      <xsl:apply-templates select="field[@name = 'classification']" />
+      
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
       <!-- 
@@ -333,7 +351,7 @@
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
   <!-- subject_corporate subject_person subject_topical subject_genre_form subject_geography subject_meeting_name subject_uniform_title -->
-      <xsl:if test="not(empty(field[@name= ('subject_corporate', 'subject_person', 'subject_topical', 'subject_genre_form', 'subject_geography', 'subject_uniform_title')]))">
+      <xsl:if test="not(empty((field[@name= ('subject_corporate', 'subject_person', 'subject_topical', 'subject_genre_form', 'subject_geography', 'subject_uniform_title')], $creator_role[lower-case(./normalize-space()) = $subject_roles])))">
       <controlaccess>
           <xsl:for-each select="field[@name = 'subject_person']">
               <persname>
@@ -365,8 +383,14 @@
                   <xsl:value-of select="./normalize-space()" />
               </genreform>
           </xsl:for-each>
-          <xsl:for-each select="$names[lower-case(role)=$subject_roles]">
-              <xsl:copy-of select="$names" />
+          <xsl:for-each select="$creator_name">
+              <xsl:variable name="i" select="position()"/>
+              <xsl:if test="lower-case($creator_role[$i]/normalize-space()) = $subject_roles">
+                  <xsl:element name="name">
+                      <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                      <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                  </xsl:element>
+              </xsl:if>
           </xsl:for-each>
               
       </controlaccess>
@@ -413,41 +437,7 @@
     </xsl:if>
   </xsl:template>
 
-    <xsl:template match="field[@name = ('creator_name','creator_role','finding_aid_provenance','historical_provenance')]">
-        
-          <origination>
-              <xsl:apply-templates select=".[@name = ('creator_name','creator_role')]" mode="creator"/>
-              
-              <xsl:for-each select=".[@name = 'finding_aid_provenance']">
-                  <xsl:copy-of select="text()" />
-              </xsl:for-each>
-              <xsl:for-each select=".[@name = 'historical_provenance']">
-                  <xsl:copy-of select="text()" />
-              </xsl:for-each>
-          </origination>
 
-    </xsl:template>
-    
-    <xsl:template match="field[@name = ('creator_name','creator_role')]" mode="creator">
-        <xsl:variable name="creator_name" select=".[@name = 'creator_name']" />
-        <xsl:variable name="creator_role" select=".[@name = 'creator_role']" />
-creator template
-        <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
-<!--         <xsl:variable name="names"> -->
-        <xsl:for-each select="$creator_name">
-            <xsl:variable name="i" select="position()"/>
-            <xsl:if test="lower-case($creator_role[$i]) = $creator_roles">
-                <xsl:element name="name">
-                    <xsl:if test="$creator_role[$i] != ''">
-                        <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
-                    </xsl:if>
-                    <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
-                </xsl:element>
-            </xsl:if>
-        </xsl:for-each>
-<!--         </xsl:variable> -->
-        
-    </xsl:template>
     
 
     <xsl:template match="field[@name = 'conditions_access']">
@@ -468,6 +458,18 @@ creator template
               </p>
           </xsl:for-each>
       </userestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'object_type']">
+      <odd>
+          <p>Object type: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'classification']">
+      <odd>
+          <p>EMU Classification: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
     </xsl:template>
     
     <xsl:template match="field[@name = 'arrangement']">
