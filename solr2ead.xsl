@@ -200,18 +200,19 @@
           </langmaterial>
       </did>
 
-      <arrangement>
-          <xsl:value-of select="field[@name = 'arrangement']/normalize-space()" />
-      </arrangement>
+      <xsl:variable name="arrangement" select="field[@name = 'arrangement']/normalize-space()" />
+      <xsl:if test="$arrangement != ''">
+          <arrangement>
+              <p><xsl:copy-of select="$arrangement" /></p>
+          </arrangement>
+      </xsl:if>
 
-      <custodhist>
-          <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
-          <xsl:for-each select="$provenance">
-              <p>
-                  <xsl:copy-of select="$provenance" />
-              </p>
-          </xsl:for-each>
-      </custodhist>
+      <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
+      <xsl:if test="$provenance != ''">
+          <custodhist>
+              <p><xsl:copy-of select="$provenance" /></p>
+          </custodhist>
+      </xsl:if>
 
       <acqinfo>
           <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
@@ -238,13 +239,12 @@
       </xsl:if>
 
       <!-- biographic description of the person or organization -->
-      <bioghist>
-          <xsl:for-each select="field[@name = 'creator_bio']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </bioghist>
+      <xsl:variable name="creator_bio" select="field[@name = 'creator_bio']/normalize-space()" />
+      <xsl:if test="$creator_bio != ''">
+          <bioghist>
+              <p><xsl:copy-of select="$creator_bio"/></p>
+          </bioghist>
+      </xsl:if>
 
       <!-- a detailed narrative description of the collection material -->
       <scopecontent>
@@ -276,29 +276,33 @@
       </scopecontent>
 
       <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
-      <relatedmaterial>
-      </relatedmaterial>
+      <!--<relatedmaterial>
+      </relatedmaterial>-->
 
-      <accessrestrict>
-          <xsl:for-each select="field[@name = 'conditions_access']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </accessrestrict>
+      <xsl:variable name="conditions_access" select="field[@name = 'conditions_access']/normalize-space()" />
+      <xsl:if test="$conditions_access != ''">
+          <accessrestrict>
+              <p><xsl:copy-of select="$conditions_access"/></p>
+          </accessrestrict>
+      </xsl:if>
 
-      <userestrict>
-          <xsl:for-each select="field[@name = 'conditions_use']">
-              <p>
-                  <xsl:value-of select="./normalize-space()" />
-              </p>
-          </xsl:for-each>
-      </userestrict>
+      <xsl:variable name="conditions_use" select="field[@name = 'conditions_use']/normalize-space()" />
+      <xsl:if test="$conditions_use != ''">
+          <userestrict>
+              <p><xsl:copy-of select="$conditions_use"/></p>
+          </userestrict>
+      </xsl:if>
 
       <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
       <xsl:for-each select="$object_type">
           <odd>
               <p>Object type: <xsl:value-of select="$object_type" /></p>
+          </odd>
+      </xsl:for-each>
+      <xsl:variable name="record_type" select="field[@name = 'record_type']/normalize-space()" />
+      <xsl:for-each select="$record_type">
+          <odd>
+              <p>Record Type: <xsl:value-of select="$record_type" /></p>
           </odd>
       </xsl:for-each>
       <xsl:variable name="classification" select="field[@name = 'classification']/normalize-space()" />
@@ -307,10 +311,17 @@
               <p>EMU Classification: <xsl:value-of select="$classification" /></p>
           </odd>
       </xsl:for-each>
+      <xsl:variable name="emu_category" select="field[@name = 'emu_category']/normalize-space()" />
+      <xsl:for-each select="$emu_category">
+          <odd>
+              <p>EMU Category: <xsl:value-of select="$emu_category" /></p>
+          </odd>
+      </xsl:for-each>
+
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
-      <separatedmaterial>
-      </separatedmaterial>
+      <!--<separatedmaterial>
+      </separatedmaterial>-->
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
