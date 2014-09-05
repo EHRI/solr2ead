@@ -340,6 +340,9 @@
 
       <!-- odd "EMU classification:" -->      
       <xsl:apply-templates select="field[@name = 'classification']" />
+
+      <!-- odd "EMU category:" -->      
+      <xsl:apply-templates select="field[@name = 'emu_category']" />
       
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
@@ -347,13 +350,6 @@
 <separatedmaterial>
       </separatedmaterial>
  -->
- 
-      <xsl:variable name="emu_category" select="field[@name = 'emu_category']/normalize-space()" />
-      <xsl:for-each select="$emu_category">
-          <odd>
-              <p>EMU Category: <xsl:value-of select="$emu_category" /></p>
-          </odd>
-      </xsl:for-each>
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
@@ -476,6 +472,12 @@
     <xsl:template match="field[@name = 'classification']">
       <odd>
           <p>EMU Classification: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'emu_category']">
+      <odd>
+          <p>EMU Category: <xsl:value-of select="./normalize-space()" /></p>
       </odd>
     </xsl:template>
     
