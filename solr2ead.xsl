@@ -337,6 +337,9 @@
       
       <!-- odd "Object type:" -->
       <xsl:apply-templates select="field[@name = 'object_type']" />
+      
+      <!-- odd "Record type:" -->
+      <xsl:apply-templates select="field[@name = 'record_type']" />
 
       <!-- odd "EMU classification:" -->      
       <xsl:apply-templates select="field[@name = 'classification']" />
@@ -466,6 +469,12 @@
     <xsl:template match="field[@name = 'object_type']">
       <odd>
           <p>Object type: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'record_type']">
+      <odd>
+          <p>Record type: <xsl:value-of select="./normalize-space()" /></p>
       </odd>
     </xsl:template>
     
