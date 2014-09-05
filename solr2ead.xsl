@@ -347,6 +347,13 @@
 <separatedmaterial>
       </separatedmaterial>
  -->
+ 
+      <xsl:variable name="emu_category" select="field[@name = 'emu_category']/normalize-space()" />
+      <xsl:for-each select="$emu_category">
+          <odd>
+              <p>EMU Category: <xsl:value-of select="$emu_category" /></p>
+          </odd>
+      </xsl:for-each>
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
