@@ -19,25 +19,27 @@
       <!-- Work on top-level <doc>s:
            - <doc> without assoc_parent_irn field
            - <doc> with assoc_parent_irn that does not match any existing <doc>'s irn -->
-      <xsl:for-each select="//doc">
-        <xsl:variable name="parent_irn" select="field[@name = 'assoc_parent_irn']/text()" />
-        <xsl:if test="not($parent_irn) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])">
-            <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
-            <xsl:result-document href="{$filename}" method="xml">
-              <ead>
-                <xsl:call-template name="header"/>
-                <xsl:call-template name="fm"/>
-                <xsl:call-template name="description_with_dsc"/>
-                <xsl:apply-templates />
-              </ead>
-            </xsl:result-document>
-        </xsl:if>
-      </xsl:for-each>
+      <xsl:apply-templates select="doc[not(field[@name = 'assoc_parent_irn']/text()) or not(//doc/field[@name = 'irn'] = field[@name = 'assoc_parent_irn'])]" />
+  </xsl:template>
+  
+  <xsl:template match="doc">
+      <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
+      <xsl:result-document href="{$filename}" method="xml">
+        <ead>
+          <xsl:call-template name="header"/>
+          <xsl:call-template name="fm"/>
+          <xsl:call-template name="description_with_dsc"/>
+          <!-- if we call apply-templates for 'the rest', make sure we don't create duplicates -->
+<!--           <xsl:apply-templates select="field[not(@name=('conditions_access','conditions_use','funding_note','arrangement','creator_name','creator_role','finding_aid_provenance','historical_provenance'))]"/> -->
+          
+        </ead>
+      </xsl:result-document>
   </xsl:template>
 
   <!-- header: <eadheader> -->
   <xsl:template name="header">
-      <xsl:variable name="convertdate" select="current-dateTime()" />
+      <xsl:variable name="convertdatetime" select="current-dateTime()" />
+      <xsl:variable name="convertdate" select="current-date()" />
       <eadheader>
           <eadid>
               <xsl:value-of select="field[@name = 'id']/normalize-space()" />
@@ -60,9 +62,9 @@
               </publicationstmt>
           </filedesc>
           <profiledesc>
-              <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/bencomp/solr2ead)
-                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="$convertdate" />
-                      <xsl:value-of select="$convertdate" />
+              <creation>Automatically converted from USHMM's Solr index file using solr2ead.xsl (https://github.com/EHRI/solr2ead)
+                  <date calendar="gregorian" era="ce"><xsl:attribute name="normal" select="format-date($convertdate, '[Y0001]-[M01]-[D01]')" />
+                      <xsl:value-of select="$convertdatetime" />
                   </date>
               </creation>
               <langusage><language langcode="eng">English</language></langusage>
@@ -77,8 +79,6 @@
               <titleproper>
                   <xsl:value-of select="field[@name = 'collection_name']/normalize-space()" />
               </titleproper>
-              <publisher>
-              </publisher>
               <date calendar="gregorian" era="ce">
                   <xsl:value-of select="field[@name = 'display_date']/normalize-space()" />
               </date>
@@ -91,9 +91,7 @@
          this template is called for top-level descriptions -->
   <xsl:template name="description_with_dsc">
     <!-- get the irn to retrieve components -->
-    <xsl:variable name="irn">
-      <xsl:value-of select="field[@name = 'irn']/normalize-space()" />
-    </xsl:variable>
+    <xsl:variable name="irn" select="field[@name = 'irn']/normalize-space()" />
 
     <!-- NB: Level attribute is mandatory -->
     <archdesc level="otherlevel">
@@ -105,6 +103,30 @@
   </xsl:template>
 
   <xsl:template name="normal_description">
+        <!-- First select names -->
+          <xsl:variable name="creator_name" select="field[@name = 'creator_name']" />
+          <xsl:variable name="creator_role" select="field[@name = 'creator_role']" />
+        
+          <xsl:variable name="names" as="element()*">
+            <xsl:for-each select="$creator_name">
+                <xsl:variable name="i" select="position()"/>
+                <xsl:element name="name">
+                    <xsl:if test="$creator_role[$i] != ''">
+                        <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                    </xsl:if>
+                    <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                </xsl:element>
+            </xsl:for-each>
+          </xsl:variable>
+          
+          <!-- DEBUG -->
+<!--           <xsl:message select="trace($names, 'names: ')"/> -->
+          
+          <!-- Lists of roles are lower case, make sure to check lower case strings against these lists -->
+          <xsl:variable name="creator_roles" select="('artist','publisher','author','issuer','manufacturer','distributor','producer','photographer','designer','agent','maker','compiler','creator','editor','engraver')"/>
+          <xsl:variable name="subject_roles" select="('subject')"/>
+          <xsl:variable name="custodial_roles" select="('owner','original owner','donor','previous owner')"/>
+
     <did>
           <xsl:variable name="rg" select="field[@name = 'rg_number']/normalize-space()" />
           <xsl:variable name="acc_num" select="field[@name = 'accession_number']/normalize-space()" />
@@ -127,28 +149,44 @@
                   <xsl:value-of select="$acc_num" />
               </unitid>
           </xsl:if>
-          <origination>
-              <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
-              <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
+          
 
-              <xsl:for-each select="$finding_aid_provenance">
-                  <p>
-                      <xsl:copy-of select="$finding_aid_provenance" />
-                  </p>
-              </xsl:for-each>
-              <xsl:for-each select="$historical_provenance">
-                  <p>
-                      <xsl:copy-of select="$historical_provenance" />
-                  </p>
-              </xsl:for-each>
-          </origination>
+        <!-- origination (can be empty) -->
+        
+        <origination>
+            <xsl:for-each select="$creator_name">
+                <xsl:variable name="i" select="position()"/>
+                <xsl:if test="$creator_role[$i] = '' or lower-case($creator_role[$i]/normalize-space()) = $creator_roles">
+                    <xsl:element name="name">
+                        <xsl:if test="$creator_role[$i] != ''">
+                            <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                        </xsl:if>
+                        <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                    </xsl:element>
+                </xsl:if>
+            </xsl:for-each>
+            <xsl:variable name="finding_aid_provenance" select="field[@name = 'finding_aid_provenance']/normalize-space()" />
+            <xsl:variable name="historical_provenance" select="field[@name = 'historical_provenance']/normalize-space()" />
+            <xsl:for-each select="$finding_aid_provenance">
+            
+                <xsl:copy-of select="$finding_aid_provenance" />
+                <xsl:if test="position() &lt; last()"><lb/></xsl:if>
+            
+            </xsl:for-each>
+            <xsl:for-each select="$historical_provenance">
+            
+                <xsl:copy-of select="$historical_provenance" />
+                <xsl:if test="position() &lt; last()"><lb/></xsl:if>
+            
+            </xsl:for-each>
+        </origination>
 
           <!-- document_quantity and document_container are similar -->
           <xsl:variable name="document_quantity" select="field[@name = 'document_quantity']/normalize-space()" />
           <xsl:variable name="document_container" select="field[@name = 'document_container']/normalize-space()" />
           <xsl:for-each select="$document_quantity">
             <xsl:variable name="i" select="position()" />
-            <container type="{$document_container[$i]}">
+            <container type="{tokenize($document_container[$i],'\s+')[1]}">
                 <xsl:value-of select="$document_quantity" />
             </container>
           </xsl:for-each>
@@ -171,8 +209,6 @@
                       <xsl:copy-of select="$extent" />
                   </extent>
               </xsl:for-each>
-
-              <xsl:variable name="extent" select="field[@name = 'extent']/normalize-space()" />
 
               <xsl:variable name="dimensions" select="field[@name = 'dimensions']/normalize-space()" />
               <xsl:for-each select="$dimensions">
@@ -200,59 +236,70 @@
           </langmaterial>
       </did>
 
-      <xsl:variable name="arrangement" select="field[@name = 'arrangement']/normalize-space()" />
-      <xsl:if test="$arrangement != ''">
-          <arrangement>
-              <p><xsl:copy-of select="$arrangement" /></p>
-          </arrangement>
-      </xsl:if>
-
+      <!-- arrangement -->
+      <xsl:apply-templates select="field[@name = 'arrangement']" />
+      
+      
+      <!-- custodhist -->
       <xsl:variable name="provenance" select="field[@name = 'provenance']/normalize-space()" />
-      <xsl:if test="$provenance != ''">
+      <xsl:if test="not(empty(($provenance, $creator_role[lower-case(text()) = $custodial_roles])))">
           <custodhist>
-              <p><xsl:copy-of select="$provenance" /></p>
+              <xsl:for-each select="$creator_name">
+                  <xsl:variable name="i" select="position()"/>
+                  <xsl:if test="lower-case($creator_role[$i]/normalize-space()) = $custodial_roles">
+                      <xsl:element name="p">
+                          <xsl:value-of select="$creator_role[$i]/normalize-space()"/>: <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                      </xsl:element>
+                  </xsl:if>
+              </xsl:for-each>
+              <xsl:for-each select="$provenance">
+                  <p>
+                      <xsl:copy-of select="$provenance" />
+                  </p>
+              </xsl:for-each>
           </custodhist>
       </xsl:if>
 
-      <acqinfo>
-          <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
-          <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" />
-          <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
-
-          <xsl:if test="$accession != ''">
-              <p>Accession number: <xsl:copy-of select="$accession" /></p>
-          </xsl:if>
-          <xsl:if test="$source != ''">
-              <p>Source: <xsl:copy-of select="$source" /></p>
-          </xsl:if>
-          <xsl:if test="$credit != ''">
-              <p>Credit: <xsl:copy-of select="$credit" /></p>
-          </xsl:if>
-      </acqinfo>
-
-      <!-- Optional funding note field -->
-      <xsl:variable name="funding_note" select="field[@name = 'funding_note']/normalize-space()" />
-      <xsl:if test="$funding_note != ''">
-          <note>
-              <p><xsl:copy-of select="$funding_note"/></p>
-          </note>
+      <xsl:variable name="accession" select="field[@name = 'accession_number']/normalize-space()" />
+      <xsl:variable name="source" select="distinct-values(field[@name = 'acq_source']/normalize-space())" />
+      <xsl:variable name="credit" select="field[@name = 'acq_credit']/normalize-space()" />
+      <xsl:if test="not(empty(($accession, $source, $credit)))">
+          <acqinfo>
+    
+              <xsl:if test="$accession != ''">
+                  <p>Accession number: <xsl:copy-of select="$accession" /></p>
+              </xsl:if>
+              <xsl:if test="$source != ''">
+                  <p>Source: <xsl:copy-of select="$source" /></p>
+              </xsl:if>
+              <xsl:if test="$credit != ''">
+                  <p>Credit: <xsl:copy-of select="$credit" /></p>
+              </xsl:if>
+          </acqinfo>
       </xsl:if>
 
+      <!-- Optional funding note field -->
+      <xsl:apply-templates select="field[@name = 'funding_note']" />
+
       <!-- biographic description of the person or organization -->
-      <xsl:variable name="creator_bio" select="field[@name = 'creator_bio']/normalize-space()" />
-      <xsl:if test="$creator_bio != ''">
+      <xsl:variable name="bioghist" select="field[@name = 'creator_bio']/normalize-space()" />
+      <xsl:if test="$bioghist != ''" >
           <bioghist>
-              <p><xsl:copy-of select="$creator_bio"/></p>
+              <xsl:for-each select="$bioghist">
+                  <p>
+                      <xsl:value-of select="$bioghist" />
+                  </p>
+              </xsl:for-each>
           </bioghist>
       </xsl:if>
 
       <!-- a detailed narrative description of the collection material -->
+      <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
+      <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
+      <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
+      <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
+      <xsl:if test="not(empty(($brief_desc, $collection_summary, $interview_summary, $scope_content)))">
       <scopecontent>
-          <xsl:variable name="brief_desc" select="field[@name = 'brief_desc']/normalize-space()" />
-          <xsl:variable name="collection_summary" select="field[@name = 'collection_summary']/normalize-space()" />
-          <xsl:variable name="interview_summary" select="field[@name = 'interview_summary']/normalize-space()" />
-          <xsl:variable name="scope_content" select="field[@name = 'scope_content']/normalize-space()" />
-
           <xsl:for-each select="$brief_desc">
               <p>
                   <xsl:copy-of select="$brief_desc" />
@@ -274,57 +321,43 @@
               </p>
           </xsl:for-each>
       </scopecontent>
+      </xsl:if>
 
       <!-- description of items which the repository acquired separately but which are related to this collection, and which a researcher might want to be aware of -->
-      <!--<relatedmaterial>
-      </relatedmaterial>-->
+     <!-- 
+ <relatedmaterial>
+      </relatedmaterial>
+ -->
 
-      <xsl:variable name="conditions_access" select="field[@name = 'conditions_access']/normalize-space()" />
-      <xsl:if test="$conditions_access != ''">
-          <accessrestrict>
-              <p><xsl:copy-of select="$conditions_access"/></p>
-          </accessrestrict>
-      </xsl:if>
+      <!-- accessrestrict -->
+      <xsl:apply-templates select="field[@name = 'conditions_access']" />
 
-      <xsl:variable name="conditions_use" select="field[@name = 'conditions_use']/normalize-space()" />
-      <xsl:if test="$conditions_use != ''">
-          <userestrict>
-              <p><xsl:copy-of select="$conditions_use"/></p>
-          </userestrict>
-      </xsl:if>
+      <!-- userestrict -->
+      <xsl:apply-templates select="field[@name = 'conditions_use']" />
+      
+      <!-- odd "Object type:" -->
+      <xsl:apply-templates select="field[@name = 'object_type']" />
+      
+      <!-- odd "Record type:" -->
+      <xsl:apply-templates select="field[@name = 'record_type']" />
 
-      <xsl:variable name="object_type" select="field[@name = 'object_type']/normalize-space()" />
-      <xsl:for-each select="$object_type">
-          <odd>
-              <p>Object type: <xsl:value-of select="$object_type" /></p>
-          </odd>
-      </xsl:for-each>
-      <xsl:variable name="record_type" select="field[@name = 'record_type']/normalize-space()" />
-      <xsl:for-each select="$record_type">
-          <odd>
-              <p>Record Type: <xsl:value-of select="$record_type" /></p>
-          </odd>
-      </xsl:for-each>
-      <xsl:variable name="classification" select="field[@name = 'classification']/normalize-space()" />
-      <xsl:for-each select="$classification">
-          <odd>
-              <p>EMU Classification: <xsl:value-of select="$classification" /></p>
-          </odd>
-      </xsl:for-each>
-      <xsl:variable name="emu_category" select="field[@name = 'emu_category']/normalize-space()" />
-      <xsl:for-each select="$emu_category">
-          <odd>
-              <p>EMU Category: <xsl:value-of select="$emu_category" /></p>
-          </odd>
-      </xsl:for-each>
+      <!-- odd "EMU classification:" -->      
+      <xsl:apply-templates select="field[@name = 'classification']" />
 
+      <!-- odd "EMU category:" -->      
+      <xsl:apply-templates select="field[@name = 'emu_category']" />
+      
 
       <!-- items which the repository acquired as part of this collection but which have been separated from it, perhaps for special treatment, storage needs, or cataloging -->
-      <!--<separatedmaterial>
-      </separatedmaterial>-->
+      <!-- 
+<separatedmaterial>
+      </separatedmaterial>
+ -->
 
       <!-- a list of subject headings or keywords for the collection, usually drawn from an authoritative source such as Library of Congress Subject Headings or the Art and Architecture Thesaurus
   accessrestrict and userestrict - statement concerning any restrictions on the material in the collection -->
+  <!-- subject_corporate subject_person subject_topical subject_genre_form subject_geography subject_meeting_name subject_uniform_title -->
+      <xsl:if test="not(empty((field[@name= ('subject_corporate', 'subject_person', 'subject_topical', 'subject_genre_form', 'subject_geography', 'subject_uniform_title')], $creator_role[lower-case(./normalize-space()) = $subject_roles])))">
       <controlaccess>
           <xsl:for-each select="field[@name = 'subject_person']">
               <persname>
@@ -356,8 +389,20 @@
                   <xsl:value-of select="./normalize-space()" />
               </genreform>
           </xsl:for-each>
+          <xsl:for-each select="$creator_name">
+              <xsl:variable name="i" select="position()"/>
+              <xsl:if test="lower-case($creator_role[$i]/normalize-space()) = $subject_roles">
+                  <xsl:element name="name">
+                      <xsl:attribute name="role" select="lower-case($creator_role[$i]/normalize-space())"/>
+                      <xsl:value-of select="$creator_name[$i]/normalize-space()"/>
+                  </xsl:element>
+              </xsl:if>
+          </xsl:for-each>
+              
       </controlaccess>
+      </xsl:if>
   </xsl:template>
+  
 
   <xsl:template name="components">
 
@@ -398,6 +443,64 @@
     </xsl:if>
   </xsl:template>
 
+
+    
+
+    <xsl:template match="field[@name = 'conditions_access']">
+      <accessrestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </accessrestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'conditions_use']">
+      <userestrict>
+          <xsl:for-each select=".">
+              <p>
+                  <xsl:value-of select="./normalize-space()" />
+              </p>
+          </xsl:for-each>
+      </userestrict>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'object_type']">
+      <odd>
+          <p>Object type: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'record_type']">
+      <odd>
+          <p>Record type: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'classification']">
+      <odd>
+          <p>EMU Classification: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'emu_category']">
+      <odd>
+          <p>EMU Category: <xsl:value-of select="./normalize-space()" /></p>
+      </odd>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'arrangement']">
+        <arrangement>
+            <p><xsl:value-of select="normalize-space(.)" /></p>
+        </arrangement>
+    </xsl:template>
+    
+    <xsl:template match="field[@name = 'funding_note']">
+        <note>
+            <p><xsl:copy-of select="normalize-space(.)"/></p>
+        </note>
+    </xsl:template>
 
   <!-- get rid of any trailing content or structure-->
   <xsl:template match="text()|@*"/>
