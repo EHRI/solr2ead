@@ -23,7 +23,8 @@
   </xsl:template>
   
   <xsl:template match="doc">
-      <xsl:variable name="filename" select="concat('ead/' , field[@name = 'id'] , '.xml')" />
+      <xsl:variable name="recordtype" select="replace(field[@name='record_type']/normalize-space(), '[ /\.]', '')" />
+      <xsl:variable name="filename" select="concat('ead/', $recordtype , '/' , field[@name = 'id'] , '.xml')" />
       <xsl:result-document href="{$filename}" method="xml">
         <ead>
           <xsl:call-template name="header"/>
