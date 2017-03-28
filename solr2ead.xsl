@@ -10,6 +10,197 @@
     <xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
     <xsl:output encoding="UTF-8"/>
 
+    <!-- Reverse lookup for language codes -->
+    <xsl:variable name="language-map">
+        <entry key="Afar">aar</entry>
+        <entry key="Abkhazian">abk</entry>
+        <entry key="Avestan">ave</entry>
+        <entry key="Afrikaans">afr</entry>
+        <entry key="Akan">aka</entry>
+        <entry key="Amharic">amh</entry>
+        <entry key="Aragonese">arg</entry>
+        <entry key="Arabic">ara</entry>
+        <entry key="Assamese">asm</entry>
+        <entry key="Avaric">ava</entry>
+        <entry key="Aymara">aym</entry>
+        <entry key="Azerbaijani">aze</entry>
+        <entry key="Bashkir">bak</entry>
+        <entry key="Belarusian">bel</entry>
+        <entry key="Bulgarian">bul</entry>
+        <entry key="Bihari">bih</entry>
+        <entry key="Bislama">bis</entry>
+        <entry key="Bambara">bam</entry>
+        <entry key="Bengali">ben</entry>
+        <entry key="Tibetan">bod</entry>
+        <entry key="Breton">bre</entry>
+        <entry key="Bosnian">bos</entry>
+        <entry key="Catalan">cat</entry>
+        <entry key="Chechen">che</entry>
+        <entry key="Chamorro">cha</entry>
+        <entry key="Corsican">cos</entry>
+        <entry key="Cree">cre</entry>
+        <entry key="Czech">ces</entry>
+        <entry key="Church Slavic">chu</entry>
+        <entry key="Chuvash">chv</entry>
+        <entry key="Welsh">cym</entry>
+        <entry key="Danish">dan</entry>
+        <entry key="German">deu</entry>
+        <entry key="Divehi">div</entry>
+        <entry key="Dzongkha">dzo</entry>
+        <entry key="Ewe">ewe</entry>
+        <entry key="Greek">ell</entry>
+        <entry key="English">eng</entry>
+        <entry key="Esperanto">epo</entry>
+        <entry key="Spanish">spa</entry>
+        <entry key="Estonian">est</entry>
+        <entry key="Basque">eus</entry>
+        <entry key="Persian">fas</entry>
+        <entry key="Fulah">ful</entry>
+        <entry key="Finnish">fin</entry>
+        <entry key="Fijian">fij</entry>
+        <entry key="Faroese">fao</entry>
+        <entry key="French">fra</entry>
+        <entry key="Frisian">fry</entry>
+        <entry key="Irish">gle</entry>
+        <entry key="Scottish Gaelic">gla</entry>
+        <entry key="Gallegan">glg</entry>
+        <entry key="Guarani">grn</entry>
+        <entry key="Gujarati">guj</entry>
+        <entry key="Manx">glv</entry>
+        <entry key="Hausa">hau</entry>
+        <entry key="Hebrew">heb</entry>
+        <entry key="Hindi">hin</entry>
+        <entry key="Hiri Motu">hmo</entry>
+        <entry key="Croatian">hrv</entry>
+        <entry key="Haitian">hat</entry>
+        <entry key="Hungarian">hun</entry>
+        <entry key="Armenian">hye</entry>
+        <entry key="Herero">her</entry>
+        <entry key="Interlingua">ina</entry>
+        <entry key="Indonesian">ind</entry>
+        <entry key="Interlingue">ile</entry>
+        <entry key="Igbo">ibo</entry>
+        <entry key="Sichuan Yi">iii</entry>
+        <entry key="Inupiaq">ipk</entry>
+        <entry key="Indonesian">ind</entry>
+        <entry key="Ido">ido</entry>
+        <entry key="Icelandic">isl</entry>
+        <entry key="Italian">ita</entry>
+        <entry key="Inuktitut">iku</entry>
+        <entry key="Hebrew">heb</entry>
+        <entry key="Japanese">jpn</entry>
+        <entry key="Yiddish">yid</entry>
+        <entry key="Javanese">jav</entry>
+        <entry key="Georgian">kat</entry>
+        <entry key="Kongo">kon</entry>
+        <entry key="Kikuyu">kik</entry>
+        <entry key="Kwanyama">kua</entry>
+        <entry key="Kazakh">kaz</entry>
+        <entry key="Greenlandic">kal</entry>
+        <entry key="Khmer">khm</entry>
+        <entry key="Kannada">kan</entry>
+        <entry key="Korean">kor</entry>
+        <entry key="Kanuri">kau</entry>
+        <entry key="Kashmiri">kas</entry>
+        <entry key="Kurdish">kur</entry>
+        <entry key="Komi">kom</entry>
+        <entry key="Cornish">cor</entry>
+        <entry key="Kirghiz">kir</entry>
+        <entry key="Latin">lat</entry>
+        <entry key="Luxembourgish">ltz</entry>
+        <entry key="Ganda">lug</entry>
+        <entry key="Limburgish">lim</entry>
+        <entry key="Lingala">lin</entry>
+        <entry key="Lao">lao</entry>
+        <entry key="Lithuanian">lit</entry>
+        <entry key="Luba-Katanga">lub</entry>
+        <entry key="Latvian">lav</entry>
+        <entry key="Malagasy">mlg</entry>
+        <entry key="Marshallese">mah</entry>
+        <entry key="Maori">mri</entry>
+        <entry key="Macedonian">mkd</entry>
+        <entry key="Malayalam">mal</entry>
+        <entry key="Mongolian">mon</entry>
+        <entry key="Moldavian">mol</entry>
+        <entry key="Marathi">mar</entry>
+        <entry key="Malay">msa</entry>
+        <entry key="Maltese">mlt</entry>
+        <entry key="Burmese">mya</entry>
+        <entry key="Nauru">nau</entry>
+        <entry key="Norwegian Bokmål">nob</entry>
+        <entry key="North Ndebele">nde</entry>
+        <entry key="Nepali">nep</entry>
+        <entry key="Ndonga">ndo</entry>
+        <entry key="Dutch">nld</entry>
+        <entry key="Norwegian Nynorsk">nno</entry>
+        <entry key="Norwegian">nor</entry>
+        <entry key="South Ndebele">nbl</entry>
+        <entry key="Navajo">nav</entry>
+        <entry key="Nyanja">nya</entry>
+        <entry key="Occitan">oci</entry>
+        <entry key="Ojibwa">oji</entry>
+        <entry key="Oromo">orm</entry>
+        <entry key="Oriya">ori</entry>
+        <entry key="Ossetian">oss</entry>
+        <entry key="Panjabi">pan</entry>
+        <entry key="Pali">pli</entry>
+        <entry key="Polish">pol</entry>
+        <entry key="Pushto">pus</entry>
+        <entry key="Portuguese">por</entry>
+        <entry key="Quechua">que</entry>
+        <entry key="Raeto-Romance">roh</entry>
+        <entry key="Rundi">run</entry>
+        <entry key="Romanian">ron</entry>
+        <entry key="Russian">rus</entry>
+        <entry key="Kinyarwanda">kin</entry>
+        <entry key="Sanskrit">san</entry>
+        <entry key="Sardinian">srd</entry>
+        <entry key="Sindhi">snd</entry>
+        <entry key="Northern Sami">sme</entry>
+        <entry key="Sango">sag</entry>
+        <entry key="Sinhalese">sin</entry>
+        <entry key="Slovak">slk</entry>
+        <entry key="Slovenian">slv</entry>
+        <entry key="Samoan">smo</entry>
+        <entry key="Shona">sna</entry>
+        <entry key="Somali">som</entry>
+        <entry key="Albanian">sqi</entry>
+        <entry key="Serbian">srp</entry>
+        <entry key="Swati">ssw</entry>
+        <entry key="Southern Sotho">sot</entry>
+        <entry key="Sundanese">sun</entry>
+        <entry key="Swedish">swe</entry>
+        <entry key="Swahili">swa</entry>
+        <entry key="Tamil">tam</entry>
+        <entry key="Telugu">tel</entry>
+        <entry key="Tajik">tgk</entry>
+        <entry key="Thai">tha</entry>
+        <entry key="Tigrinya">tir</entry>
+        <entry key="Turkmen">tuk</entry>
+        <entry key="Tagalog">tgl</entry>
+        <entry key="Tswana">tsn</entry>
+        <entry key="Tonga">ton</entry>
+        <entry key="Turkish">tur</entry>
+        <entry key="Tsonga">tso</entry>
+        <entry key="Tatar">tat</entry>
+        <entry key="Twi">twi</entry>
+        <entry key="Tahitian">tah</entry>
+        <entry key="Uighur">uig</entry>
+        <entry key="Ukrainian">ukr</entry>
+        <entry key="Urdu">urd</entry>
+        <entry key="Uzbek">uzb</entry>
+        <entry key="Venda">ven</entry>
+        <entry key="Vietnamese">vie</entry>
+        <entry key="Volapük">vol</entry>
+        <entry key="Walloon">wln</entry>
+        <entry key="Wolof">wol</entry>
+        <entry key="Xhosa">xho</entry>
+        <entry key="Yiddish">yid</entry>
+        <entry key="Yoruba">yor</entry>
+        <entry key="Zhuang">zha</entry>
+        <entry key="Chinese">zho</entry>
+        <entry key="Zulu">zul</entry>
+    </xsl:variable>
 
     <xsl:template match="/response/result">
         <!-- Work on top-level <doc>s:
@@ -140,7 +331,7 @@
                 <xsl:value-of select="*[@name = 'display_date']/normalize-space()"/>
             </unitdate>
             <unitid type="irn">
-                <xsl:value-of select="*[@name = 'irn']/normalize-space()"/>
+                <xsl:value-of select="*[@name = 'id']/normalize-space()"/>
             </unitid>
             <xsl:if test="$rg != ''">
                 <unitid type="rg_number" label="Record group number">
@@ -189,8 +380,8 @@
             </origination>
 
             <!-- document_quantity and document_container are similar -->
-            <xsl:variable name="document_quantity" select="*[@name = 'document_quantity']/normalize-space()"/>
-            <xsl:variable name="document_container" select="*[@name = 'document_container']/normalize-space()"/>
+            <xsl:variable name="document_quantity" select="*[@name = 'document_quantity']/str/normalize-space()"/>
+            <xsl:variable name="document_container" select="*[@name = 'document_container']/str/normalize-space()"/>
             <xsl:for-each select="$document_quantity">
                 <xsl:variable name="i" select="position()"/>
                 <container type="{tokenize($document_container[$i],'\s+')[1]}">
@@ -198,9 +389,9 @@
                 </container>
             </xsl:for-each>
             <physdesc>
-                <xsl:variable name="extent_quantity" select="*[@name = 'extent_quantity']/normalize-space()"/>
-                <xsl:variable name="extent_unit" select="*[@name = 'extent_unit']/normalize-space()"/>
-                <xsl:variable name="extent_format" select="*[@name = 'extent_format']/normalize-space()"/>
+                <xsl:variable name="extent_quantity" select="*[@name = 'extent_quantity']/str/normalize-space()"/>
+                <xsl:variable name="extent_unit" select="*[@name = 'extent_unit']/str/normalize-space()"/>
+                <xsl:variable name="extent_format" select="*[@name = 'extent_format']/str/normalize-space()"/>
                 <!-- if there vars exist there should always be an equal number of them,
                      and they need to be reordered to make sense in the EAD -->
                 <xsl:for-each select="$extent_quantity">
@@ -217,7 +408,7 @@
                     </extent>
                 </xsl:for-each>
 
-                <xsl:variable name="dimensions" select="*[@name = 'dimensions']/normalize-space()"/>
+                <xsl:variable name="dimensions" select="*[@name = 'dimensions']/str/normalize-space()"/>
                 <xsl:for-each select="$dimensions">
                     <dimensions>
                         <xsl:copy-of select="$dimensions"/>
@@ -237,10 +428,15 @@
                 </xsl:for-each>
             </physdesc>
             <langmaterial>
-                <xsl:for-each select="*[@name = 'language']">
-                    <language>
-                        <xsl:value-of select="./normalize-space()"/>
-                    </language>
+                <xsl:for-each select="*[@name = 'language']/str">
+                    <xsl:variable name="lang-name" select="./normalize-space()"/>
+                    <xsl:variable name="lang-code" select="$language-map/entry[@key=$lang-name]"/>
+                    <xsl:if test="not(empty($lang-code))">
+                        <language langcode="{$lang-code}"><xsl:value-of select="$lang-name"/></language>
+                    </xsl:if>
+                    <xsl:if test="empty($lang-code)">
+                        <language><xsl:value-of select="$lang-name"/></language>
+                    </xsl:if>
                 </xsl:for-each>
             </langmaterial>
         </did>
@@ -312,8 +508,8 @@
         <!-- a detailed narrative description of the collection material -->
         <xsl:variable name="brief_desc" select="*[@name = 'brief_desc']/normalize-space()"/>
         <xsl:variable name="collection_summary" select="*[@name = 'collection_summary']/normalize-space()"/>
-        <xsl:variable name="interview_summary" select="*[@name = 'interview_summary']/normalize-space()"/>
-        <xsl:variable name="scope_content" select="*[@name = 'scope_content']/normalize-space()"/>
+        <xsl:variable name="interview_summary" select="*[@name = 'interview_summary']/str/normalize-space()"/>
+        <xsl:variable name="scope_content" select="*[@name = 'scope_content']/str/normalize-space()"/>
         <xsl:if test="not(empty(($brief_desc, $collection_summary, $interview_summary, $scope_content)))">
             <scopecontent>
                 <xsl:for-each select="$brief_desc">
